@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import PaymentComponent from "./PaymentComponent";
 
 export default function ProductCard({
+	id,
 	image,
 	productName,
 	description,
@@ -9,8 +11,13 @@ export default function ProductCard({
 	amount,
 	currency,
 }) {
+	const navigate = useNavigate();
+
 	return (
-		<div className="m-2 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 w-full border-2 border-gray-400 h-110 max-w-sm">
+		<div
+			onClick={() => navigate(`/product/${id}`)}
+			className="m-2 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 w-full border-2 border-gray-400 h-110 max-w-sm cursor-pointer"
+		>
 			<div className="h-48 m-1 rounded-lg overflow-hidden">
 				<img
 					src={image}
@@ -37,12 +44,14 @@ export default function ProductCard({
 						<span className="text-xl font-bold text-blue-600">
 							{price}
 						</span>
-						<PaymentComponent
-							productName={productName}
-							description={description}
-							amount={amount}
-							currency={currency}
-						/>
+						<div onClick={(e) => e.stopPropagation()}>
+							<PaymentComponent
+								productName={productName}
+								description={description}
+								amount={amount}
+								currency={currency}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>

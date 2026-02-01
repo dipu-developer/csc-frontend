@@ -7,6 +7,7 @@ import Login from "./Pages/Login.jsx";
 import Signup from "./Pages/Signup.jsx";
 import PrivateRoute from "./Components/PrivateRoute.jsx";
 import Profile from "./Pages/Profile.jsx";
+import Product from "./Pages/Product.jsx";
 
 function App() {
 	return (
@@ -29,6 +30,14 @@ function App() {
 						element={
 							<PrivateRoute>
 								<Profile />
+							</PrivateRoute>
+						}
+					/>
+					<Route
+						path="/product/:id"
+						element={
+							<PrivateRoute>
+								<Product />
 							</PrivateRoute>
 						}
 					/>
