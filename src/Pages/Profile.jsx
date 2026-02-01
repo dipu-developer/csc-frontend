@@ -12,10 +12,17 @@ function Profile() {
 	});
 	const navigate = useNavigate();
 
+	const getCookie = (name) => {
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) return parts.pop().split(";").shift();
+		return null;
+	};
+
 	useEffect(() => {
 		const fetchProfile = async () => {
 			try {
-				const token = localStorage.getItem("authToken");
+				const token = getCookie("authToken");
 				const response = await axios.get(
 					`${import.meta.env.VITE_BACKEND_URL}/api/auth/profile/`,
 					{
@@ -30,7 +37,10 @@ function Profile() {
 				console.error("Error fetching profile:", error);
 				if (error.response && error.response.status !== 200) {
 					// Handle error appropriately (e.g., redirect to login)
-					localStorage.removeItem("authToken");
+					document.cookie =
+						"authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+					document.cookie =
+						"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 					localStorage.removeItem("authUser");
 					navigate("/login");
 				}
@@ -60,7 +70,7 @@ function Profile() {
 		}
 
 		try {
-			const token = localStorage.getItem("authToken");
+			const token = getCookie("authToken");
 			const response = await axios.post(
 				`${import.meta.env.VITE_BACKEND_URL}/api/auth/change-password/`,
 				passwordData,
@@ -97,11 +107,30 @@ function Profile() {
 		}
 	};
 
-	const handleLogout = () => {
-		localStorage.removeItem("authToken");
-		localStorage.removeItem("authUser");
-		window.dispatchEvent(new Event("authChanged"));
-		navigate("/login");
+	const handleLogout = async () => {
+		try {
+			const accessToken = getCookie("authToken");
+			const refreshToken = getCookie("refreshToken");
+			if (accessToken && refreshToken) {
+				await axios.post(
+					`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout/`,
+					{ refresh_token: refreshToken },
+					{
+						headers: {
+							Authorization: `Bearer ${accessToken}`,
+						},
+					},
+				);
+			}
+		} finally {
+			document.cookie =
+				"authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie =
+				"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			localStorage.removeItem("authUser");
+			window.dispatchEvent(new Event("authChanged"));
+			navigate("/login");
+		}
 	};
 
 	if (!profileData) {

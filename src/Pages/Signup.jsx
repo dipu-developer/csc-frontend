@@ -48,8 +48,21 @@ function Signup() {
 			const data = response.data;
 
 			localStorage.setItem("authUser", JSON.stringify(data.data.user));
-			localStorage.setItem("authToken", data.data.tokens.access);
-			localStorage.setItem("refreshToken", data.data.tokens.refresh);
+
+			const accessDate = new Date();
+			accessDate.setTime(
+				accessDate.getTime() +
+					data.data.ACCESS_TOKEN_LIFETIME * 24 * 60 * 60 * 1000,
+			);
+			document.cookie = `authToken=${data.data.tokens.access}; expires=${accessDate.toUTCString()}; path=/`;
+
+			const refreshDate = new Date();
+			refreshDate.setTime(
+				refreshDate.getTime() +
+					data.data.REFRESH_TOKEN_LIFETIME * 24 * 60 * 60 * 1000,
+			);
+			document.cookie = `refreshToken=${data.data.tokens.refresh}; expires=${refreshDate.toUTCString()}; path=/`;
+
 			window.dispatchEvent(new Event("authChanged"));
 			console.log("Signup successful:", data);
 			navigate("/");
