@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ReCAPTCHA from "react-google-recaptcha";
 
 function Signup() {
 	const [formData, setFormData] = useState({
@@ -11,10 +10,6 @@ function Signup() {
 		password: "",
 	});
 
-	const [recaptchaToken, setRecaptchaToken] = useState(null);
-	const google_Recaptcha_site_key = import.meta.env
-		.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
-
 	const navigate = useNavigate();
 
 	const handleChange = (e) => {
@@ -23,11 +18,6 @@ function Signup() {
 			...prevData,
 			[name]: value,
 		}));
-	};
-
-	const handleRecaptchaChange = (token) => {
-		setRecaptchaToken(token);
-		console.log("reCAPTCHA Token:", token);
 	};
 
 	const handleSignup = (e) => {
@@ -69,7 +59,6 @@ function Signup() {
 		window.dispatchEvent(new Event("authChanged"));
 
 		console.log("Signup Data:", newUser);
-		console.log("reCAPTCHA Token:", recaptchaToken);
 		navigate("/");
 	};
 
@@ -158,13 +147,6 @@ function Signup() {
 						/>
 					</div>
 
-					<div className="mb-6 flex justify-center">
-						<ReCAPTCHA
-							sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-							onChange={handleRecaptchaChange}
-						/>
-					</div>
-
 					<div className="flex gap-4">
 						<button
 							type="submit"
@@ -172,12 +154,14 @@ function Signup() {
 						>
 							Signup
 						</button>
+					</div>
+					<div className="text-center">
+						<span className="text-gray-600">have an account? </span>
 						<button
-							type="button"
 							onClick={handleLoginRedirect}
-							className="flex-1 bg-gray-500 text-white font-bold py-2 px-4 rounded-md hover:bg-gray-600 transition duration-200"
+							className="text-blue-500 font-bold hover:text-blue-700 underline cursor-pointer"
 						>
-							Login
+							Login here
 						</button>
 					</div>
 				</form>
