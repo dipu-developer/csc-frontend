@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 function Login() {
 	const [formData, setFormData] = useState({
@@ -21,43 +22,30 @@ function Login() {
 		e.preventDefault();
 
 		try {
-			const response = await fetch(
-				"http://127.0.0.1:8000/api/auth/login/",
+			const response = await axios.post(
+				`${import.meta.env.VITE_BACKEND_URL}/api/auth/login/`,
 				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						email: formData.email,
-						password: formData.password,
-					}),
+					email: formData.email,
+					password: formData.password,
 				},
 			);
 
-			const data = await response.json();
+			const data = response.data;
 
-			if (response.ok) {
-				localStorage.setItem(
-					"authUser",
-					JSON.stringify(data.data.user),
-				);
-				localStorage.setItem("authToken", data.data.tokens.access);
-				localStorage.setItem("refreshToken", data.data.tokens.refresh);
-				window.dispatchEvent(new Event("authChanged"));
-				console.log("Login successful for:", data.data.user.email);
-				navigate("/");
-			} else {
-				alert(data.message || "Login failed");
-			}
+			localStorage.setItem("authUser", JSON.stringify(data.data.user));
+			localStorage.setItem("authToken", data.data.tokens.access);
+			localStorage.setItem("refreshToken", data.data.tokens.refresh);
+			window.dispatchEvent(new Event("authChanged"));
+			console.log("Login successful for:", data.data.user.email);
+			navigate("/");
 		} catch (error) {
 			console.error("Login error:", error);
-			alert("An error occurred. Please try again.");
+			if (error.response) {
+				alert(error.response.data.message || "Login failed");
+			} else {
+				alert("An error occurred. Please try again.");
+			}
 		}
-	};
-
-	const handleSignupRedirect = () => {
-		navigate("/signup");
 	};
 
 	return (
@@ -105,12 +93,12 @@ function Login() {
 
 				<div className="text-center">
 					<span className="text-gray-600">No account? </span>
-					<button
-						onClick={handleSignupRedirect}
+					<Link
+						to="/signup"
 						className="text-blue-500 font-bold hover:text-blue-700 underline cursor-pointer"
 					>
 						Signup here
-					</button>
+					</Link>
 				</div>
 			</div>
 		</div>

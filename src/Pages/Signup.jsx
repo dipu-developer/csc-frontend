@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 function Signup() {
 	const [formData, setFormData] = useState({
@@ -31,38 +32,31 @@ function Signup() {
 		}
 
 		try {
-			const response = await fetch(
-				"http://127.0.0.1:8000/api/auth/register/",
+			const response = await axios.post(
+				`${import.meta.env.VITE_BACKEND_URL}/api/auth/register/`,
 				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						first_name: formData.firstName,
-						last_name: formData.lastName,
-						email: formData.email,
-						phone_number: formData.phoneNumber,
-						password: formData.password,
-						password_confirm: formData.confirmPassword,
-						referral_code: formData.referralCode,
-					}),
+					first_name: formData.firstName,
+					last_name: formData.lastName,
+					email: formData.email,
+					phone_number: formData.phoneNumber,
+					password: formData.password,
+					password_confirm: formData.confirmPassword,
+					referral_code: formData.referralCode,
 				},
 			);
 
-			const data = await response.json();
+			const data = response.data;
 
-			if (response.ok) {
-				localStorage.setItem(
-					"authUser",
-					JSON.stringify(data.data.user),
-				);
-				localStorage.setItem("authToken", data.data.tokens.access);
-				localStorage.setItem("refreshToken", data.data.tokens.refresh);
-				window.dispatchEvent(new Event("authChanged"));
-				console.log("Signup successful:", data);
-				navigate("/");
-			} else {
+			localStorage.setItem("authUser", JSON.stringify(data.data.user));
+			localStorage.setItem("authToken", data.data.tokens.access);
+			localStorage.setItem("refreshToken", data.data.tokens.refresh);
+			window.dispatchEvent(new Event("authChanged"));
+			console.log("Signup successful:", data);
+			navigate("/");
+		} catch (error) {
+			console.error("Signup error:", error);
+			if (error.response) {
+				const data = error.response.data;
 				console.error("Signup failed:", data);
 				let errorMessage = data.message || "Signup failed";
 				if (data.errors) {
@@ -72,15 +66,10 @@ function Signup() {
 					errorMessage += `\n${errorDetails}`;
 				}
 				alert(errorMessage);
+			} else {
+				alert("An error occurred. Please try again.");
 			}
-		} catch (error) {
-			console.error("Signup error:", error);
-			alert("An error occurred. Please try again.");
 		}
-	};
-
-	const handleLoginRedirect = () => {
-		navigate("/login");
 	};
 
 	return (
@@ -204,12 +193,12 @@ function Signup() {
 					</div>
 					<div className="text-center">
 						<span className="text-gray-600">have an account? </span>
-						<button
-							onClick={handleLoginRedirect}
+						<Link
+							to="/login"
 							className="text-blue-500 font-bold hover:text-blue-700 underline cursor-pointer"
 						>
 							Login here
-						</button>
+						</Link>
 					</div>
 				</form>
 			</div>

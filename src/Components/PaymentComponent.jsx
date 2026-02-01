@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const PaymentComponent = ({
 	productName = "Product",
@@ -62,22 +63,14 @@ const PaymentComponent = ({
 			// Get order_id from backend
 			const backend =
 				import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-			const orderRes = await fetch(`${backend}/create-order`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					amount,
-					currency,
-					userDetails: userData,
-				}),
+			const orderRes = await axios.post(`${backend}/create-order`, {
+				amount,
+				currency,
+				userDetails: userData,
 			});
 
-			if (!orderRes.ok) {
-				alert("Failed to create order");
-				return;
-			}
+			const order = orderRes.data;
 
-			const order = await orderRes.json();
 			if (!order || !order.id) {
 				alert("Invalid order response");
 				return;

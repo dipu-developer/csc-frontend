@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Profile() {
 	const [profileData, setProfileData] = useState(null);
@@ -15,8 +16,8 @@ function Profile() {
 		const fetchProfile = async () => {
 			try {
 				const token = localStorage.getItem("authToken");
-				const response = await fetch(
-					`http://127.0.0.1:8000/api/auth/profile/`,
+				const response = await axios.get(
+					`${import.meta.env.VITE_BACKEND_URL}/api/auth/profile/`,
 					{
 						headers: {
 							Authorization: `Bearer ${token}`,
@@ -24,18 +25,15 @@ function Profile() {
 					},
 				);
 
-				if (response.ok) {
-					const data = await response.json();
-					setProfileData(data.data);
-				} else {
-					console.error("Failed to fetch profile:", response.status);
+				setProfileData(response.data.data);
+			} catch (error) {
+				console.error("Error fetching profile:", error);
+				if (error.response && error.response.status !== 200) {
 					// Handle error appropriately (e.g., redirect to login)
 					localStorage.removeItem("authToken");
 					localStorage.removeItem("authUser");
 					navigate("/login");
 				}
-			} catch (error) {
-				console.error("Error fetching profile:", error);
 			}
 		};
 
@@ -63,29 +61,27 @@ function Profile() {
 
 		try {
 			const token = localStorage.getItem("authToken");
-			const response = await fetch(
-				"http://127.0.0.1:8000/api/auth/change-password/",
+			const response = await axios.post(
+				`${import.meta.env.VITE_BACKEND_URL}/api/auth/change-password/`,
+				passwordData,
 				{
-					method: "POST",
 					headers: {
-						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
 					},
-					body: JSON.stringify(passwordData),
 				},
 			);
 
-			const data = await response.json();
-
-			if (response.ok) {
-				alert("Password changed successfully");
-				setShowPasswordReset(false);
-				setPasswordData({
-					old_password: "",
-					new_password: "",
-					new_password_confirm: "",
-				});
-			} else {
+			alert("Password changed successfully");
+			setShowPasswordReset(false);
+			setPasswordData({
+				old_password: "",
+				new_password: "",
+				new_password_confirm: "",
+			});
+		} catch (error) {
+			console.error("Error changing password:", error);
+			if (error.response) {
+				const data = error.response.data;
 				console.error("Password change failed:", data);
 				let errorMessage = data.message || "Failed to change password";
 				if (data.errors) {
@@ -95,10 +91,9 @@ function Profile() {
 					errorMessage += `\n${errorDetails}`;
 				}
 				alert(errorMessage);
+			} else {
+				alert("An error occurred. Please try again.");
 			}
-		} catch (error) {
-			console.error("Error changing password:", error);
-			alert("An error occurred. Please try again.");
 		}
 	};
 

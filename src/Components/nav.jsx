@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
 
 export default function Nav() {
@@ -40,8 +40,6 @@ export default function Nav() {
 		};
 	}, []);
 
-	const navigate = useNavigate();
-
 	return (
 		<nav className="sticky top-0 z-50 bg-blue-600 text-white shadow-lg">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,14 +72,12 @@ export default function Nav() {
 								className="relative flex items-center space-x-4"
 								ref={avatarRef}
 							>
-								<div
-									onClick={() => {
-										navigate("/profile");
-									}}
+								<Link
+									to="/profile"
 									className="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold cursor-pointer hover:bg-blue-100 transition duration-200"
 								>
 									{userName.charAt(0).toUpperCase()}
-								</div>
+								</Link>
 							</div>
 						)}
 					</div>
