@@ -1,5 +1,4 @@
-import React from "react";
-import { useRazorpay } from "react-razorpay";
+import React, { useState, useEffect } from "react";
 
 const PaymentComponent = ({
 	productName = "Product",
@@ -7,9 +6,37 @@ const PaymentComponent = ({
 	amount = 100,
 	currency = "INR",
 }) => {
-	const { error, isLoading, Razorpay } = useRazorpay();
+	const [isSdkLoaded, setIsSdkLoaded] = useState(false);
+
+	useEffect(() => {
+		const loadRazorpayScript = () => {
+			if (window.Razorpay) {
+				setIsSdkLoaded(true);
+				return;
+			}
+
+			const scriptSrc = "https://checkout.razorpay.com/v1/checkout.js";
+			let script = document.querySelector(`script[src="${scriptSrc}"]`);
+
+			if (!script) {
+				script = document.createElement("script");
+				script.src = scriptSrc;
+				script.async = true;
+				document.body.appendChild(script);
+			}
+
+			script.addEventListener("load", () => setIsSdkLoaded(true));
+		};
+
+		loadRazorpayScript();
+	}, []);
 
 	const handlePayment = async () => {
+		if (!isSdkLoaded) {
+			alert("Razorpay SDK is loading. Please wait...");
+			return;
+		}
+
 		try {
 			// Load logged-in user details from localStorage
 			const authEmail = localStorage.getItem("authUser");
@@ -75,7 +102,7 @@ const PaymentComponent = ({
 				},
 			};
 
-			const razorpayInstance = new Razorpay(options);
+			const razorpayInstance = new window.Razorpay(options);
 			razorpayInstance.open();
 		} catch (err) {
 			console.error(err);
@@ -86,7 +113,7 @@ const PaymentComponent = ({
 	return (
 		<button
 			onClick={handlePayment}
-			disabled={isLoading}
+			disabled={!isSdkLoaded}
 			className="bg-blue-500 text-white px-3 py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200 disabled:opacity-50"
 		>
 			Buy

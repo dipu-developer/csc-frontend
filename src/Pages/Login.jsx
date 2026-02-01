@@ -17,31 +17,43 @@ function Login() {
 		}));
 	};
 
-	const handleLogin = (e) => {
+	const handleLogin = async (e) => {
 		e.preventDefault();
 
-		// Basic client-side login: verify against users in localStorage
-		const usersJson = localStorage.getItem("users") || "[]";
-		const users = JSON.parse(usersJson);
-		const found = users.find((u) => u.email === formData.email);
-		if (!found) {
-			alert("No account found with this email. Please signup.");
-			return;
-		}
+		try {
+			const response = await fetch(
+				"http://127.0.0.1:8000/api/auth/login/",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						email: formData.email,
+						password: formData.password,
+					}),
+				},
+			);
 
-		// Compare stored (btoa) password
-		if (found.password !== btoa(formData.password)) {
-			alert("Incorrect password. Please try again.");
-			return;
-		}
+			const data = await response.json();
 
-		// Success: set auth and redirect
-		localStorage.setItem("authUser", found.email);
-		localStorage.setItem("authToken", btoa(found.email + ":" + Date.now()));
-		// notify other listeners (same-window) to update UI
-		window.dispatchEvent(new Event("authChanged"));
-		console.log("Login successful for:", found.email);
-		navigate("/");
+			if (response.ok) {
+				localStorage.setItem(
+					"authUser",
+					JSON.stringify(data.data.user),
+				);
+				localStorage.setItem("authToken", data.data.tokens.access);
+				localStorage.setItem("refreshToken", data.data.tokens.refresh);
+				window.dispatchEvent(new Event("authChanged"));
+				console.log("Login successful for:", data.data.user.email);
+				navigate("/");
+			} else {
+				alert(data.message || "Login failed");
+			}
+		} catch (error) {
+			console.error("Login error:", error);
+			alert("An error occurred. Please try again.");
+		}
 	};
 
 	const handleSignupRedirect = () => {

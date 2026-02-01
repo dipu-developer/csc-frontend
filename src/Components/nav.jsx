@@ -5,20 +5,21 @@ import { createPortal } from "react-dom";
 export default function Nav() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userName, setUserName] = useState("U");
-	const [menuOpen, setMenuOpen] = useState(false);
 	const avatarRef = React.useRef(null);
-	const [dropdownPos, setDropdownPos] = useState(null);
 
 	React.useEffect(() => {
 		function updateAuthState() {
-			const email = localStorage.getItem("authUser");
-			if (email) {
-				setIsLoggedIn(true);
-				const usersJson = localStorage.getItem("users") || "[]";
-				const users = JSON.parse(usersJson);
-				const me = users.find((u) => u.email === email);
-				if (me && me.firstName)
-					setUserName(me.firstName.charAt(0).toUpperCase());
+			const authUser = localStorage.getItem("authUser");
+			if (authUser) {
+				try {
+					const user = JSON.parse(authUser);
+					setIsLoggedIn(true);
+					if (user && user.first_name) {
+						setUserName(user.first_name.charAt(0).toUpperCase());
+					}
+				} catch (e) {
+					setIsLoggedIn(false);
+				}
 			} else {
 				setIsLoggedIn(false);
 			}
@@ -40,25 +41,6 @@ export default function Nav() {
 	}, []);
 
 	const navigate = useNavigate();
-
-	const handleLogout = () => {
-		localStorage.removeItem("authUser");
-		localStorage.removeItem("authToken");
-		setIsLoggedIn(false);
-		setMenuOpen(false);
-		navigate("/login");
-	};
-
-	// close menu when clicking outside
-	React.useEffect(() => {
-		const onDocClick = (e) => {
-			if (avatarRef.current && !avatarRef.current.contains(e.target)) {
-				setMenuOpen(false);
-			}
-		};
-		window.addEventListener("click", onDocClick);
-		return () => window.removeEventListener("click", onDocClick);
-	}, []);
 
 	return (
 		<nav className="sticky top-0 z-50 bg-blue-600 text-white shadow-lg">
@@ -94,40 +76,12 @@ export default function Nav() {
 							>
 								<div
 									onClick={() => {
-										const rect =
-											avatarRef.current.getBoundingClientRect();
-										setDropdownPos({
-											top: rect.bottom + window.scrollY,
-											left: rect.right - 144, // align right edge assuming dropdown width ~144px
-										});
-										setMenuOpen((s) => !s);
+										navigate("/profile");
 									}}
 									className="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold cursor-pointer hover:bg-blue-100 transition duration-200"
 								>
 									{userName.charAt(0).toUpperCase()}
 								</div>
-
-								{menuOpen &&
-									dropdownPos &&
-									createPortal(
-										<div
-											style={{
-												position: "absolute",
-												top: dropdownPos.top + "px",
-												left: dropdownPos.left + "px",
-												zIndex: 9999,
-											}}
-											className="w-36 bg-white text-black rounded-md shadow-lg p-2"
-										>
-											<button
-												onClick={handleLogout}
-												className="w-full text-left px-3 py-2 rounded hover:bg-gray-100"
-											>
-												Logout
-											</button>
-										</div>,
-										document.body,
-									)}
 							</div>
 						)}
 					</div>

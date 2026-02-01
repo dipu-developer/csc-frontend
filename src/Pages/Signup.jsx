@@ -8,6 +8,8 @@ function Signup() {
 		email: "",
 		phoneNumber: "",
 		password: "",
+		confirmPassword: "",
+		referralCode: "",
 	});
 
 	const navigate = useNavigate();
@@ -20,46 +22,61 @@ function Signup() {
 		}));
 	};
 
-	const handleSignup = (e) => {
+	const handleSignup = async (e) => {
 		e.preventDefault();
-		if (!recaptchaToken) {
-			alert("Please verify the reCAPTCHA");
+
+		if (formData.password !== formData.confirmPassword) {
+			alert("Passwords do not match");
 			return;
 		}
 
-		// Basic client-side signup: save users to localStorage
-		const usersJson = localStorage.getItem("users") || "[]";
-		const users = JSON.parse(usersJson);
+		try {
+			const response = await fetch(
+				"http://127.0.0.1:8000/api/auth/register/",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						first_name: formData.firstName,
+						last_name: formData.lastName,
+						email: formData.email,
+						phone_number: formData.phoneNumber,
+						password: formData.password,
+						password_confirm: formData.confirmPassword,
+						referral_code: formData.referralCode,
+					}),
+				},
+			);
 
-		// Check if email already registered
-		if (users.some((u) => u.email === formData.email)) {
-			alert("An account with this email already exists. Please login.");
-			return;
+			const data = await response.json();
+
+			if (response.ok) {
+				localStorage.setItem(
+					"authUser",
+					JSON.stringify(data.data.user),
+				);
+				localStorage.setItem("authToken", data.data.tokens.access);
+				localStorage.setItem("refreshToken", data.data.tokens.refresh);
+				window.dispatchEvent(new Event("authChanged"));
+				console.log("Signup successful:", data);
+				navigate("/");
+			} else {
+				console.error("Signup failed:", data);
+				let errorMessage = data.message || "Signup failed";
+				if (data.errors) {
+					const errorDetails = Object.entries(data.errors)
+						.map(([field, msgs]) => `${field}: ${msgs}`)
+						.join("\n");
+					errorMessage += `\n${errorDetails}`;
+				}
+				alert(errorMessage);
+			}
+		} catch (error) {
+			console.error("Signup error:", error);
+			alert("An error occurred. Please try again.");
 		}
-
-		// Store user (password is lightly encoded with btoa for demo only)
-		const newUser = {
-			firstName: formData.firstName,
-			lastName: formData.lastName,
-			email: formData.email,
-			phoneNumber: formData.phoneNumber,
-			password: btoa(formData.password),
-		};
-
-		users.push(newUser);
-		localStorage.setItem("users", JSON.stringify(users));
-
-		// Set auth state (simple token) and redirect to home
-		localStorage.setItem("authUser", formData.email);
-		localStorage.setItem(
-			"authToken",
-			btoa(formData.email + ":" + Date.now()),
-		);
-		// notify other listeners (same-window) to update UI
-		window.dispatchEvent(new Event("authChanged"));
-
-		console.log("Signup Data:", newUser);
-		navigate("/");
 	};
 
 	const handleLoginRedirect = () => {
@@ -132,7 +149,22 @@ function Signup() {
 						/>
 					</div>
 
-					<div className="mb-6">
+					<div className="mb-4">
+						<label className="block text-gray-700 text-sm font-bold mb-2">
+							Referral Code
+						</label>
+						<input
+							type="text"
+							name="referralCode"
+							value={formData.referralCode}
+							onChange={handleChange}
+							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+							placeholder="Referral Code"
+							required
+						/>
+					</div>
+
+					<div className="mb-4">
 						<label className="block text-gray-700 text-sm font-bold mb-2">
 							Password
 						</label>
@@ -143,6 +175,21 @@ function Signup() {
 							onChange={handleChange}
 							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 							placeholder="Password"
+							required
+						/>
+					</div>
+
+					<div className="mb-6">
+						<label className="block text-gray-700 text-sm font-bold mb-2">
+							Confirm Password
+						</label>
+						<input
+							type="password"
+							name="confirmPassword"
+							value={formData.confirmPassword}
+							onChange={handleChange}
+							className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+							placeholder="Confirm Password"
 							required
 						/>
 					</div>
