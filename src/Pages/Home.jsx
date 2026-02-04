@@ -33,7 +33,7 @@ function Home() {
 	}, []);
 
 	return (
-		<div className="flex flex-wrap mx-[8%] p-2 min-h-screen">
+		<div className="flex flex-wrap w-full p-2 min-h-screen">
 			{products.map((product) => (
 				<ProductCard
 					key={product.id}

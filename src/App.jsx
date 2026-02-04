@@ -10,6 +10,8 @@ import PrivateRoute from "./Components/PrivateRoute.jsx";
 import Profile from "./Pages/Profile.jsx";
 import Product from "./Pages/Product.jsx";
 import SideBar from "./Components/SideBar.jsx";
+import Wallet from "./Pages/Wallet.jsx";
+import Transactions from "./Pages/Transactions.jsx";
 
 function App() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -38,13 +40,13 @@ function App() {
 		<>
 			<Router>
 				<Nav toggleSidebar={toggleSidebar} />
-				<div className="flex items-start">
+				<div className="flex items-start w-full">
 					{isLoggedIn && isSidebarOpen && (
-						<div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto z-40 flex-shrink-0">
+						<div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto z-40 flex shrink-0">
 							<SideBar />
 						</div>
 					)}
-					<div className="flex-grow min-w-0">
+					<div className="flex grow min-w-0 w-full">
 						<Routes>
 							<Route
 								path="/"
@@ -69,6 +71,22 @@ function App() {
 								element={
 									<PrivateRoute>
 										<Product />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path="/wallet"
+								element={
+									<PrivateRoute>
+										<Wallet />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path="/transactions"
+								element={
+									<PrivateRoute>
+										<Transactions />
 									</PrivateRoute>
 								}
 							/>

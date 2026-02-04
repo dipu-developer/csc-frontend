@@ -1,13 +1,41 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function SideBar() {
 	const navigate = useNavigate();
 
-	const handleLogout = () => {
-		localStorage.removeItem("authUser");
-		window.dispatchEvent(new Event("authChanged"));
-		navigate("/login");
+	const getCookie = (name) => {
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) return parts.pop().split(";").shift();
+		return null;
+	};
+
+	const handleLogout = async () => {
+		try {
+			const accessToken = getCookie("authToken");
+			const refreshToken = getCookie("refreshToken");
+			if (accessToken && refreshToken) {
+				await axios.post(
+					`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout/`,
+					{ refresh_token: refreshToken },
+					{
+						headers: {
+							Authorization: `Bearer ${accessToken}`,
+						},
+					},
+				);
+			}
+		} finally {
+			document.cookie =
+				"authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie =
+				"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			localStorage.removeItem("authUser");
+			window.dispatchEvent(new Event("authChanged"));
+			navigate("/login");
+		}
 	};
 
 	return (
@@ -32,7 +60,7 @@ export default function SideBar() {
 					Wallet
 				</Link>
 				<Link
-					to="/account"
+					to="/profile"
 					className="px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors duration-200"
 				>
 					Account

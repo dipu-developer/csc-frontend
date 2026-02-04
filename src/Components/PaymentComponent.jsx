@@ -61,8 +61,7 @@ const PaymentComponent = ({
 			}
 
 			// Get order_id from backend
-			const backend =
-				import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+			const backend = import.meta.env.VITE_BACKEND_URL;
 			const orderRes = await axios.post(`${backend}/create-order`, {
 				amount,
 				currency,
@@ -77,9 +76,7 @@ const PaymentComponent = ({
 			}
 
 			const options = {
-				key:
-					import.meta.env.VITE_RAZORPAY_KEY ||
-					"rzp_test_S9iSUJwVgEC7WB",
+				key: import.meta.env.VITE_RAZORPAY_KEY,
 				amount: Math.round(amount * 100),
 				currency,
 				name: productName,
