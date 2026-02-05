@@ -12,6 +12,7 @@ import Product from "./Pages/Product.jsx";
 import SideBar from "./Components/SideBar.jsx";
 import Wallet from "./Pages/Wallet.jsx";
 import Transactions from "./Pages/Transactions.jsx";
+import Assets from "./Pages/Assets.jsx";
 
 function App() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -63,6 +64,14 @@ function App() {
 								element={
 									<PrivateRoute>
 										<Profile />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path="/assets"
+								element={
+									<PrivateRoute>
+										<Assets />
 									</PrivateRoute>
 								}
 							/>

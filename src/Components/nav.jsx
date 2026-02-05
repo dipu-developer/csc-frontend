@@ -1,13 +1,43 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
+import axios from "axios";
 
 export default function Nav({ toggleSidebar }) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userName, setUserName] = useState("U");
+	const [walletBalance, setWalletBalance] = useState(null);
+	const [currency, setCurrency] = useState("INR");
 	const avatarRef = React.useRef(null);
 
 	React.useEffect(() => {
+		const getCookie = (name) => {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop().split(";").shift();
+			return null;
+		};
+
+		const fetchWalletBalance = async () => {
+			try {
+				const token = getCookie("authToken");
+				if (!token) return;
+				const backendUrl = import.meta.env.VITE_BACKEND_URL;
+				const response = await axios.get(
+					`${backendUrl}/api/payments/wallet/balance/`,
+					{
+						headers: { Authorization: `Bearer ${token}` },
+					},
+				);
+				if (response.data && response.data.data) {
+					setWalletBalance(response.data.data.balance);
+					setCurrency(response.data.data.currency);
+				}
+			} catch (err) {
+				console.error("Error fetching wallet balance:", err);
+			}
+		};
+
 		function updateAuthState() {
 			const authUser = localStorage.getItem("authUser");
 			if (authUser) {
@@ -17,11 +47,14 @@ export default function Nav({ toggleSidebar }) {
 					if (user && user.first_name) {
 						setUserName(user.first_name.charAt(0).toUpperCase());
 					}
+					fetchWalletBalance();
 				} catch (e) {
 					setIsLoggedIn(false);
+					setWalletBalance(null);
 				}
 			} else {
 				setIsLoggedIn(false);
+				setWalletBalance(null);
 			}
 		}
 
@@ -93,9 +126,14 @@ export default function Nav({ toggleSidebar }) {
 							</>
 						) : (
 							<div
-								className="relative flex items-center space-x-4"
+								className="relative flex items-center space-x-4 justify-between gap-1"
 								ref={avatarRef}
 							>
+								{walletBalance !== null && (
+									<span className="text-white font-medium">
+										{currency} {walletBalance}
+									</span>
+								)}
 								<Link
 									to="/profile"
 									className="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold cursor-pointer hover:bg-blue-100 transition duration-200"
