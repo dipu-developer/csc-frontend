@@ -13,45 +13,51 @@ export default function ProductCard({
 }) {
 	const navigate = useNavigate();
 
+	// Placeholder image if none provided
+	const displayImage =
+		image || "https://via.placeholder.com/400x300?text=No+Image";
+
 	return (
 		<div
 			onClick={() => navigate(`/product/${id}`)}
-			className="m-2 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 w-full border-2 border-gray-400 h-110 max-w-sm cursor-pointer"
+			className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer group"
 		>
-			<div className="h-48 m-1 rounded-lg overflow-hidden">
+			{/* Product Image */}
+			<div className="aspect-[4/3] overflow-hidden bg-gray-100">
 				<img
-					src={image}
+					src={displayImage}
 					alt={productName}
-					className="w-full h-full object-cover"
+					className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
 				/>
 			</div>
+
 			{/* Card Content */}
-			<div className="p-4 flex flex-col h-64">
+			<div className="p-5">
 				{/* Product Name */}
-				<h3 className="text-xl font-bold text-gray-800 mb-4">
+				<h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
 					{productName}
 				</h3>
 
 				{/* Description */}
-				<p className="text-gray-600 text-sm h-8 flex-1 mb-4">
-					{description?.length > 100
-						? `${description.substring(0, 100)}...`
-						: description}
+				<p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[2.5rem]">
+					{description}
 				</p>
-				<div className="py-4">
-					{/* Bottom Section: Price and Buy Button */}
-					<div className="flex justify-between items-center space-x-4 border-t pt-4">
-						<span className="text-xl font-bold text-blue-600">
+
+				{/* Bottom Section: Price and Buy Button */}
+				<div className="flex items-center justify-between pt-4 border-t border-gray-100">
+					<div>
+						<p className="text-xs text-gray-500 mb-1">Price</p>
+						<p className="text-xl font-semibold text-blue-600">
 							{price}
-						</span>
-						<div onClick={(e) => e.stopPropagation()}>
-							<PaymentComponent
-								productName={productName}
-								description={description}
-								amount={amount}
-								currency={currency}
-							/>
-						</div>
+						</p>
+					</div>
+					<div onClick={(e) => e.stopPropagation()}>
+						<PaymentComponent
+							productName={productName}
+							description={description}
+							amount={amount}
+							currency={currency}
+						/>
 					</div>
 				</div>
 			</div>

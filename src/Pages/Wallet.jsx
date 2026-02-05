@@ -129,90 +129,259 @@ export default function Wallet() {
 		}
 	};
 
+	const formatDate = (dateString) => {
+		const date = new Date(dateString);
+		return new Intl.DateTimeFormat("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+		}).format(date);
+	};
+
+	const getTransactionIcon = (type) => {
+		switch (type?.toLowerCase()) {
+			case "credit":
+			case "topup":
+				return (
+					<div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+						<svg
+							className="w-5 h-5 text-green-600"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M12 4v16m8-8H4"
+							/>
+						</svg>
+					</div>
+				);
+			case "debit":
+			case "payment":
+				return (
+					<div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+						<svg
+							className="w-5 h-5 text-red-600"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M20 12H4"
+							/>
+						</svg>
+					</div>
+				);
+			default:
+				return (
+					<div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+						<svg
+							className="w-5 h-5 text-gray-600"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+							/>
+						</svg>
+					</div>
+				);
+		}
+	};
+
 	if (loading) {
 		return (
-			<div className="flex justify-center items-center min-h-screen bg-gray-50">
-				<div className="animate-pulse text-xl font-semibold text-gray-600">
-					Loading Wallet...
-				</div>
+			<div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+				<div className="text-gray-500 text-lg">Loading...</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
-			<div className="max-w-6xl mx-auto">
-				<h1 className="text-3xl font-bold text-gray-900 mb-8">
-					My Wallet
-				</h1>
+		<div className="min-h-screen w-full bg-gray-50 py-12 px-4">
+			<div className="max-w-4xl mx-auto">
+				{/* Page Header */}
+				<div className="mb-8">
+					<h1 className="text-2xl font-semibold text-gray-900">
+						Wallet
+					</h1>
+					<p className="text-sm text-gray-500 mt-1">
+						Manage your balance and transactions
+					</p>
+				</div>
 
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-					{/* Left Column: Balance & Top-up */}
-					<div className="lg:col-span-1 space-y-6">
-						{/* Balance Card */}
-						<div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-							<h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-								Available Balance
-							</h2>
-							<div className="mt-4 flex items-baseline">
-								<span className="text-4xl font-extrabold text-gray-900">
-									{wallet?.currency} {wallet?.balance}
-								</span>
+				{/* Balance Card */}
+				<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
+					<div className="bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-8">
+						<div className="flex items-center justify-between">
+							<div>
+								<p className="text-blue-100 text-sm mb-2">
+									Available Balance
+								</p>
+								<p className="text-white text-3xl font-semibold">
+									{wallet?.currency}{" "}
+									{wallet?.balance || "0.00"}
+								</p>
 							</div>
-							<div className="mt-2 text-sm text-gray-500">
+							<div>
 								{wallet?.is_active ? (
-									<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+									<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-400 text-white">
 										Active
 									</span>
 								) : (
-									<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+									<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-400 text-white">
 										Inactive
 									</span>
 								)}
 							</div>
 						</div>
+					</div>
+				</div>
 
-						{/* Top-up Form */}
-						<div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-							<h3 className="text-lg font-semibold text-gray-900 mb-4">
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					{/* Add Money Card */}
+					<div className="lg:col-span-1">
+						<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+							<h2 className="text-lg font-semibold text-gray-900 mb-5">
 								Add Money
-							</h3>
-							<form onSubmit={handleTopUp}>
-								<div className="mb-4">
+							</h2>
+							<form onSubmit={handleTopUp} className="space-y-4">
+								<div>
 									<label
 										htmlFor="amount"
-										className="block text-sm font-medium text-gray-700 mb-1"
+										className="block text-sm font-medium text-gray-700 mb-2"
 									>
 										Amount
 									</label>
-									<div className="relative rounded-md shadow-sm">
-										<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-											<span className="text-gray-500 sm:text-sm">
-												{wallet?.currency || "INR"}
-											</span>
-										</div>
+									<div className="relative">
+										<span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
+											{wallet?.currency || "INR"}
+										</span>
 										<input
 											type="number"
 											name="amount"
 											id="amount"
-											className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md py-3 border"
+											className="w-full pl-16 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
 											placeholder="0.00"
 											value={topUpAmount}
 											onChange={(e) =>
 												setTopUpAmount(e.target.value)
 											}
 											min="1"
+											step="0.01"
 										/>
 									</div>
 								</div>
 								<button
 									type="submit"
 									disabled={!isSdkLoaded}
-									className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors duration-200"
+									className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
 								>
-									Proceed to Pay
+									{isSdkLoaded
+										? "Proceed to Pay"
+										: "Loading..."}
 								</button>
 							</form>
+						</div>
+					</div>
+
+					{/* Recent Transactions */}
+					<div className="lg:col-span-2">
+						<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+							<h2 className="text-lg font-semibold text-gray-900 mb-5">
+								Recent Transactions
+							</h2>
+
+							{transactions && transactions.length > 0 ? (
+								<div className="space-y-4">
+									{transactions
+										.slice(0, 5)
+										.map((transaction, index) => (
+											<div
+												key={index}
+												className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+											>
+												<div className="flex items-center gap-4">
+													{getTransactionIcon(
+														transaction.transaction_type,
+													)}
+													<div>
+														<p className="text-sm font-medium text-gray-900">
+															{transaction.description ||
+																transaction.transaction_type}
+														</p>
+														<p className="text-xs text-gray-500 mt-0.5">
+															{formatDate(
+																transaction.created_at,
+															)}
+														</p>
+													</div>
+												</div>
+												<div className="text-right">
+													<p
+														className={`text-sm font-semibold ${
+															transaction.transaction_type?.toLowerCase() ===
+																"credit" ||
+															transaction.transaction_type?.toLowerCase() ===
+																"topup"
+																? "text-green-600"
+																: "text-red-600"
+														}`}
+													>
+														{transaction.transaction_type?.toLowerCase() ===
+															"credit" ||
+														transaction.transaction_type?.toLowerCase() ===
+															"topup"
+															? "+"
+															: "-"}
+														{wallet?.currency}{" "}
+														{Math.abs(
+															transaction.amount,
+														)}
+													</p>
+													<p className="text-xs text-gray-500 mt-0.5 capitalize">
+														{transaction.status}
+													</p>
+												</div>
+											</div>
+										))}
+								</div>
+							) : (
+								<div className="text-center py-12">
+									<svg
+										className="w-16 h-16 text-gray-300 mx-auto mb-4"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth="1.5"
+											d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+										/>
+									</svg>
+									<p className="text-gray-500 text-sm">
+										No transactions yet
+									</p>
+									<p className="text-gray-400 text-xs mt-1">
+										Your transaction history will appear
+										here
+									</p>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

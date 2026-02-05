@@ -134,92 +134,162 @@ function Profile() {
 	};
 
 	if (!profileData) {
-		return <div>Loading profile...</div>;
+		return (
+			<div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+				<div className="text-gray-500 text-lg">Loading...</div>
+			</div>
+		);
 	}
 
 	return (
-		<div className="min-h-screen w-full  flex items-center justify-center bg-gray-100">
-			<div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-				<h2 className="text-2xl font-bold mb-6 text-center">Profile</h2>
-				<p>
-					<strong>First Name:</strong> {profileData.first_name}
-				</p>
-				<p>
-					<strong>Last Name:</strong> {profileData.last_name}
-				</p>
-				<p>
-					<strong>Phone Number:</strong> {profileData.phone_number}
-				</p>
-				<p>
-					<strong>Role:</strong> {profileData.role_display}
-				</p>
-				<button
-					className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-					onClick={handleResetPassword}
-				>
-					{showPasswordReset ? "Cancel" : "Reset Password"}
-				</button>
-				<button
-					className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 ml-4"
-					onClick={handleLogout}
-				>
-					Logout
-				</button>
+		<div className="min-h-screen w-full bg-gray-50 py-12 px-4">
+			<div className="max-w-2xl mx-auto">
+				{/* Profile Card */}
+				<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+					{/* Header Section */}
+					<div className="bg-gradient-to-r from-blue-500 to-blue-600 h-32"></div>
 
+					{/* Profile Content */}
+					<div className="px-8 pb-8">
+						{/* Avatar */}
+						<div className="-mt-16 mb-6">
+							<div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+								<div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-semibold">
+									{profileData.first_name?.charAt(0)}
+									{profileData.last_name?.charAt(0)}
+								</div>
+							</div>
+						</div>
+
+						{/* Name and Role */}
+						<div className="mb-6">
+							<h1 className="text-2xl font-semibold text-gray-900 mb-2">
+								{profileData.first_name} {profileData.last_name}
+							</h1>
+							<span className="inline-block bg-blue-50 text-blue-700 text-sm font-medium px-3 py-1 rounded-full">
+								{profileData.role_display}
+							</span>
+						</div>
+
+						{/* Contact Information */}
+						<div className="space-y-3 mb-8 pb-8 border-b border-gray-200">
+							<div className="flex items-center text-gray-600">
+								<svg
+									className="w-5 h-5 mr-3 text-gray-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+									/>
+								</svg>
+								<span className="text-sm">
+									{profileData.email}
+								</span>
+							</div>
+							<div className="flex items-center text-gray-600">
+								<svg
+									className="w-5 h-5 mr-3 text-gray-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+									/>
+								</svg>
+								<span className="text-sm">
+									{profileData.phone_number}
+								</span>
+							</div>
+						</div>
+
+						{/* Action Buttons */}
+						<div className="flex gap-3">
+							<button
+								onClick={handleResetPassword}
+								className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+							>
+								{showPasswordReset
+									? "Cancel"
+									: "Change Password"}
+							</button>
+							<button
+								onClick={handleLogout}
+								className="bg-white border border-red-300 text-red-600 py-2.5 px-6 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
+							>
+								Logout
+							</button>
+						</div>
+					</div>
+				</div>
+
+				{/* Password Reset Form */}
 				{showPasswordReset && (
-					<form
-						onSubmit={submitPasswordReset}
-						className="mt-6 border-t pt-4"
-					>
-						<h3 className="text-lg font-bold mb-4">
+					<div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+						<h2 className="text-xl font-semibold text-gray-900 mb-6">
 							Change Password
-						</h3>
-						<div className="mb-4">
-							<label className="block text-gray-700 text-sm font-bold mb-2">
-								Old Password
-							</label>
-							<input
-								type="password"
-								name="old_password"
-								value={passwordData.old_password}
-								onChange={handlePasswordChange}
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-								required
-							/>
-						</div>
-						<div className="mb-4">
-							<label className="block text-gray-700 text-sm font-bold mb-2">
-								New Password
-							</label>
-							<input
-								type="password"
-								name="new_password"
-								value={passwordData.new_password}
-								onChange={handlePasswordChange}
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-								required
-							/>
-						</div>
-						<div className="mb-4">
-							<label className="block text-gray-700 text-sm font-bold mb-2">
-								Confirm New Password
-							</label>
-							<input
-								type="password"
-								name="new_password_confirm"
-								value={passwordData.new_password_confirm}
-								onChange={handlePasswordChange}
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-								required
-							/>
-						</div>
-						<button
-							type="submit"
-							className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700"
+						</h2>
+						<form
+							onSubmit={submitPasswordReset}
+							className="space-y-5"
 						>
-							Update Password
-						</button>
-					</form>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Current Password
+								</label>
+								<input
+									type="password"
+									name="old_password"
+									value={passwordData.old_password}
+									onChange={handlePasswordChange}
+									className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+									required
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									New Password
+								</label>
+								<input
+									type="password"
+									name="new_password"
+									value={passwordData.new_password}
+									onChange={handlePasswordChange}
+									className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+									required
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Confirm New Password
+								</label>
+								<input
+									type="password"
+									name="new_password_confirm"
+									value={passwordData.new_password_confirm}
+									onChange={handlePasswordChange}
+									className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+									required
+								/>
+							</div>
+							<div className="pt-4">
+								<button
+									type="submit"
+									className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+								>
+									Update Password
+								</button>
+							</div>
+						</form>
+					</div>
 				)}
 			</div>
 		</div>

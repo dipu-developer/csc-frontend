@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
 import axios from "axios";
 
-export default function Nav({ toggleSidebar }) {
+export default function Nav({ toggleSidebar, isSidebarOpen }) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userName, setUserName] = useState("U");
 	const [walletBalance, setWalletBalance] = useState(null);
@@ -74,69 +74,103 @@ export default function Nav({ toggleSidebar }) {
 	}, []);
 
 	return (
-		<nav className="sticky top-0 z-50 bg-blue-600 text-white shadow-lg">
+		<nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-all duration-300">
 			<div className="w-full px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between items-center h-16">
 					{/* Left Side - Logo & Hamburger */}
-					<div className="flex items-center">
+					<div className="flex items-center gap-4">
 						{isLoggedIn && (
 							<button
 								onClick={toggleSidebar}
-								className="mr-4 text-white hover:text-blue-200 focus:outline-none"
+								className="text-gray-600 hover:text-gray-900 focus:outline-none transition-colors"
+								aria-label="Toggle sidebar"
 							>
-								<svg
-									className="w-6 h-6"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M4 6h16M4 12h16M4 18h16"
-									/>
-								</svg>
+								{isSidebarOpen ? (
+									// X icon when sidebar is open
+									<svg
+										className="w-6 h-6"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M6 18L18 6M6 6l12 12"
+										/>
+									</svg>
+								) : (
+									// Hamburger icon when sidebar is closed
+									<svg
+										className="w-6 h-6"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M4 6h16M4 12h16M4 18h16"
+										/>
+									</svg>
+								)}
 							</button>
 						)}
-						<Link to="/" className="flex items-center space-x-2">
-							<div className="text-2xl font-bold">🎯</div>
-							<span className="text-xl font-bold">
+						<Link to="/" className="flex items-center gap-2">
+							<div className="text-2xl">🎯</div>
+							<span className="text-lg font-semibold text-gray-900">
 								CSC Solutions
 							</span>
 						</Link>
 					</div>
 
 					{/* Right Side - Links or User Avatar */}
-					<div className="flex items-center space-x-6">
+					<div className="flex items-center gap-6">
 						{!isLoggedIn ? (
 							<>
 								<Link
 									to="/login"
-									className="hover:text-blue-200 transition duration-200 font-semibold"
+									className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
 								>
 									Login
 								</Link>
 								<Link
 									to="/signup"
-									className="hover:text-blue-200 transition duration-200 font-semibold"
+									className="text-sm font-medium bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
 								>
-									Signup
+									Sign Up
 								</Link>
 							</>
 						) : (
 							<div
-								className="relative flex items-center space-x-4 justify-between gap-1"
+								className="relative flex items-center gap-4"
 								ref={avatarRef}
 							>
 								{walletBalance !== null && (
-									<span className="text-white font-medium">
-										{currency} {walletBalance}
-									</span>
+									<div className="hidden sm:flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-lg">
+										<svg
+											className="w-4 h-4 text-gray-600"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+											/>
+										</svg>
+										<span className="text-sm font-medium text-gray-900">
+											{currency} {walletBalance}
+										</span>
+									</div>
 								)}
 								<Link
 									to="/profile"
-									className="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold cursor-pointer hover:bg-blue-100 transition duration-200"
+									className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm hover:shadow-md transition-shadow"
 								>
 									{userName.charAt(0).toUpperCase()}
 								</Link>
