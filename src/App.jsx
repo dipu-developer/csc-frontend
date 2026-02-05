@@ -13,6 +13,7 @@ import SideBar from "./Components/SideBar.jsx";
 import Wallet from "./Pages/Wallet.jsx";
 import Transactions from "./Pages/Transactions.jsx";
 import Assets from "./Pages/Assets.jsx";
+import MyPurchases from "./Pages/MyPurchases.jsx";
 
 function App() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -95,6 +96,14 @@ function App() {
 								element={
 									<PrivateRoute>
 										<Transactions />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path="/my_purchases"
+								element={
+									<PrivateRoute>
+										<MyPurchases />
 									</PrivateRoute>
 								}
 							/>

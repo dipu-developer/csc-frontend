@@ -1,112 +1,97 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PaymentComponent = ({
+	productId,
 	productName = "Product",
 	description = "Product description",
 	amount = 100,
 	currency = "INR",
 }) => {
-	const [isSdkLoaded, setIsSdkLoaded] = useState(false);
-
-	useEffect(() => {
-		const loadRazorpayScript = () => {
-			if (window.Razorpay) {
-				setIsSdkLoaded(true);
-				return;
-			}
-
-			const scriptSrc = "https://checkout.razorpay.com/v1/checkout.js";
-			let script = document.querySelector(`script[src="${scriptSrc}"]`);
-
-			if (!script) {
-				script = document.createElement("script");
-				script.src = scriptSrc;
-				script.async = true;
-				document.body.appendChild(script);
-			}
-
-			script.addEventListener("load", () => setIsSdkLoaded(true));
-		};
-
-		loadRazorpayScript();
-	}, []);
+	const [loading, setLoading] = useState(false);
+	const [throttled, setThrottled] = useState(false);
+	const navigate = useNavigate();
 
 	const handlePayment = async () => {
-		if (!isSdkLoaded) {
-			alert("Razorpay SDK is loading. Please wait...");
+		if (!productId) {
+			alert("Invalid product");
+			return;
+		}
+
+		if (!window.confirm("Are you sure you want to buy this product?")) {
 			return;
 		}
 
 		try {
-			// Load logged-in user details from localStorage
-			const authEmail = localStorage.getItem("authUser");
-			let userData = {
-				name: "",
-				email: authEmail || "",
-				contact: "",
+			setLoading(true);
+			const getCookie = (name) => {
+				const value = `; ${document.cookie}`;
+				const parts = value.split(`; ${name}=`);
+				if (parts.length === 2) return parts.pop().split(";").shift();
+				return null;
 			};
+			const token = getCookie("authToken");
 
-			if (authEmail) {
-				const usersJson = localStorage.getItem("users") || "[]";
-				const users = JSON.parse(usersJson);
-				const user = users.find((u) => u.email === authEmail);
-				if (user) {
-					userData = {
-						name: `${user.firstName} ${user.lastName}`.trim(),
-						email: user.email,
-						contact: user.phoneNumber || "",
-					};
-				}
-			}
-
-			// Get order_id from backend
-			const backend = import.meta.env.VITE_BACKEND_URL;
-			const orderRes = await axios.post(`${backend}/create-order`, {
-				amount,
-				currency,
-				userDetails: userData,
-			});
-
-			const order = orderRes.data;
-
-			if (!order || !order.id) {
-				alert("Invalid order response");
+			if (!token) {
+				alert("Please login to purchase products.");
+				navigate("/login");
 				return;
 			}
 
-			const options = {
-				key: import.meta.env.VITE_RAZORPAY_KEY,
-				amount: Math.round(amount * 100),
-				currency,
-				name: productName,
-				description,
-				order_id: order.id,
-				handler: (response) => {
-					console.log(response);
-					alert("Payment Successful!");
+			const backend = import.meta.env.VITE_BACKEND_URL;
+			await axios.post(
+				`${backend}/api/payments/purchase/`,
+				{ product_id: productId },
+				{
+					headers: { Authorization: `Bearer ${token}` },
 				},
-				prefill: userData,
-				theme: {
-					color: "#F37254",
-				},
-			};
+			);
 
-			const razorpayInstance = new window.Razorpay(options);
-			razorpayInstance.open();
+			alert("Purchase Successful!");
+			navigate("/my_purchases");
 		} catch (err) {
 			console.error(err);
-			alert("Payment error: " + err.message);
+			let msg;
+
+			if (err.response?.status === 429) {
+				const retryAfter = err.response.headers?.["retry-after"];
+				const waitHours = retryAfter ? Math.ceil(retryAfter) : 1; // Wait for seconds from header or default
+
+				msg = `You are making too many requests. Please wait ${waitHours} hours before trying again.`;
+
+				setThrottled(true);
+				setTimeout(
+					() => setThrottled(false),
+					waitHours * 60 * 60 * 1000,
+				);
+			} else {
+				msg =
+					err.response?.data?.message ||
+					err.response?.data?.detail ||
+					"Purchase error: " + err.message;
+			}
+
+			alert(msg);
+			if (msg && msg.toLowerCase().includes("wallet")) {
+				navigate("/wallet");
+			}
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	return (
 		<button
 			onClick={handlePayment}
-			disabled={!isSdkLoaded}
+			disabled={loading || throttled}
 			className="bg-blue-500 text-white px-3 py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200 disabled:opacity-50"
 		>
-			Buy
+			{loading
+				? "Processing..."
+				: throttled
+					? "Please wait..."
+					: "Buy Now"}
 		</button>
 	);
 };

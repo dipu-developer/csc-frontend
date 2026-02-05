@@ -264,6 +264,7 @@ export default function Product() {
 							{/* Purchase Button */}
 							<div className="mt-auto">
 								<PaymentComponent
+									productId={product.id}
 									productName={product.name}
 									description={product.description}
 									amount={product.price}
