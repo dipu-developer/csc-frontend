@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-export default function SideBar() {
+export default function SideBar({ isOpen }) {
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -45,9 +45,9 @@ export default function SideBar() {
 		{
 			path: "/assets",
 			label: "Products",
-			icon: (
+			icon: (isOpen) => (
 				<svg
-					className="w-5 h-5"
+					className={isOpen ? "w-5 h-5" : "w-6 h-6"}
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -64,9 +64,9 @@ export default function SideBar() {
 		{
 			path: "/transactions",
 			label: "Transactions",
-			icon: (
+			icon: (isOpen) => (
 				<svg
-					className="w-5 h-5"
+					className={isOpen ? "w-5 h-5" : "w-6 h-6"}
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -83,9 +83,9 @@ export default function SideBar() {
 		{
 			path: "/wallet",
 			label: "Wallet",
-			icon: (
+			icon: (isOpen) => (
 				<svg
-					className="w-5 h-5"
+					className={isOpen ? "w-5 h-5" : "w-6 h-6"}
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -102,9 +102,9 @@ export default function SideBar() {
 		{
 			path: "/profile",
 			label: "Profile",
-			icon: (
+			icon: (isOpen) => (
 				<svg
-					className="w-5 h-5"
+					className={isOpen ? "w-5 h-5" : "w-6 h-6"}
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -121,7 +121,11 @@ export default function SideBar() {
 	];
 
 	return (
-		<div className="w-64 bg-white h-full shadow-sm flex flex-col border-r border-gray-200">
+		<div
+			className={`bg-white h-full shadow-sm flex flex-col border-r border-gray-200 transition-all duration-300 ${
+				isOpen ? "w-64" : "w-16"
+			}`}
+		>
 			{/* Navigation Items */}
 			<div className="flex-1 py-6">
 				<nav className="space-y-1 px-3">
@@ -129,14 +133,15 @@ export default function SideBar() {
 						<Link
 							key={item.path}
 							to={item.path}
-							className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+							className={`flex items-center gap-3 rounded-lg text-sm font-medium transition-colors ${
 								isActive(item.path)
 									? "bg-blue-50 text-blue-600"
 									: "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-							}`}
+							} ${!isOpen ? "justify-center px-2 py-3" : "px-4 py-3"}`}
+							title={!isOpen ? item.label : ""}
 						>
-							{item.icon}
-							<span>{item.label}</span>
+							{item.icon(isOpen)}
+							{isOpen && <span>{item.label}</span>}
 						</Link>
 					))}
 				</nav>
@@ -146,10 +151,13 @@ export default function SideBar() {
 			<div className="p-4 border-t border-gray-200">
 				<button
 					onClick={handleLogout}
-					className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+					className={`w-full flex items-center gap-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors ${
+						!isOpen ? "justify-center px-2 py-3" : "px-4 py-3"
+					}`}
+					title={!isOpen ? "Logout" : ""}
 				>
 					<svg
-						className="w-5 h-5"
+						className={isOpen ? "w-5 h-5" : "w-6 h-6"}
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
@@ -161,7 +169,7 @@ export default function SideBar() {
 							d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
 						/>
 					</svg>
-					<span>Logout</span>
+					{isOpen && <span>Logout</span>}
 				</button>
 			</div>
 		</div>

@@ -22,7 +22,6 @@ function App() {
 		const checkAuth = () => {
 			const authUser = localStorage.getItem("authUser");
 			setIsLoggedIn(!!authUser);
-			if (!authUser) setIsSidebarOpen(false);
 		};
 
 		window.addEventListener("storage", checkAuth);
@@ -42,9 +41,9 @@ function App() {
 			<Router>
 				<Nav toggleSidebar={toggleSidebar} />
 				<div className="flex items-start w-full">
-					{isLoggedIn && isSidebarOpen && (
+					{isLoggedIn && (
 						<div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto z-40 flex shrink-0">
-							<SideBar />
+							<SideBar isOpen={isSidebarOpen} />
 						</div>
 					)}
 					<div className="flex grow min-w-0 w-full">
