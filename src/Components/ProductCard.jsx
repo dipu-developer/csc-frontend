@@ -112,24 +112,6 @@ export default function ProductCard({
 						</div>
 					)}
 					{showBuyButton ? (
-						<div onClick={(e) => e.stopPropagation()}>
-							<PaymentComponent
-								productId={id}
-								productName={productName}
-								description={description}
-								amount={amount}
-								currency={currency}
-							/>
-						</div>
-					) : showDownloadButton ? (
-						<button
-							onClick={handleDownload}
-							disabled={isDownloading}
-							className="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors text-sm disabled:opacity-50"
-						>
-							{isDownloading ? "Downloading..." : "Download"}
-						</button>
-					) : (
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
@@ -139,7 +121,15 @@ export default function ProductCard({
 						>
 							View
 						</button>
-					)}
+					) : showDownloadButton ? (
+						<button
+							onClick={handleDownload}
+							disabled={isDownloading}
+							className="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors text-sm disabled:opacity-50"
+						>
+							{isDownloading ? "Downloading..." : "Download"}
+						</button>
+					) : null}
 				</div>
 			</div>
 		</div>
