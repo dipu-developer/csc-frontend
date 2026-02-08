@@ -4,11 +4,12 @@ import ProductCard from "../Components/ProductCard";
 
 function Assets() {
 	const [products, setProducts] = useState([]);
+	const [purchases, setPurchases] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		const fetchProducts = async () => {
+		const fetchData = async () => {
 			try {
 				setLoading(true);
 				const getCookie = (name) => {
@@ -20,22 +21,31 @@ function Assets() {
 				};
 				const token = getCookie("authToken");
 
-				const response = await axios.get(
-					`${import.meta.env.VITE_BACKEND_URL}/api/payments/products/`,
-					{
-						headers: { Authorization: `Bearer ${token}` },
-					},
-				);
-				console.log(response.data.data.products);
-				setProducts(response.data.data.products);
+				const [productsRes, purchasesRes] = await Promise.all([
+					axios.get(
+						`${import.meta.env.VITE_BACKEND_URL}/api/payments/products/`,
+						{
+							headers: { Authorization: `Bearer ${token}` },
+						},
+					),
+					axios.get(
+						`${import.meta.env.VITE_BACKEND_URL}/api/payments/my-purchases/`,
+						{
+							headers: { Authorization: `Bearer ${token}` },
+						},
+					),
+				]);
+
+				setProducts(productsRes.data.data.products);
+				setPurchases(purchasesRes.data.data.purchases);
 			} catch (error) {
-				console.error("Error fetching products:", error);
-				setError("Failed to load products");
+				console.error("Error fetching data:", error);
+				setError("Failed to load assets");
 			} finally {
 				setLoading(false);
 			}
 		};
-		fetchProducts();
+		fetchData();
 	}, []);
 
 	if (loading) {
@@ -83,6 +93,35 @@ function Assets() {
 						Browse and purchase available products
 					</p>
 				</div>
+
+				{/* My Purchases Section */}
+				{purchases.length > 0 && (
+					<div className="mb-12">
+						<h2 className="text-xl font-semibold text-gray-900 mb-6">
+							My Purchases
+						</h2>
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+							{purchases.map((purchase) => (
+								<ProductCard
+									key={purchase.id}
+									id={purchase.id}
+									image={purchase.product_image}
+									productName={purchase.product_name}
+									description="Purchased Product"
+									showBuyButton={false}
+									showDownloadButton={true}
+									disableNavigation={true}
+								/>
+							))}
+						</div>
+					</div>
+				)}
+
+				{purchases.length > 0 && (
+					<h2 className="text-xl font-semibold text-gray-900 mb-6">
+						All Products
+					</h2>
+				)}
 
 				{/* Products Grid */}
 				{products.length === 0 ? (
