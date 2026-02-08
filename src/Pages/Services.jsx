@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProductCard from "../Components/ProductCard";
 
-export default function MyPurchases() {
-	const [purchases, setPurchases] = useState([]);
+function Services() {
+	const [services, setServices] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		const fetchPurchases = async () => {
+		const fetchServices = async () => {
 			try {
 				setLoading(true);
 				const getCookie = (name) => {
@@ -21,22 +21,30 @@ export default function MyPurchases() {
 				const token = getCookie("authToken");
 
 				const response = await axios.get(
-					`${
-						import.meta.env.VITE_BACKEND_URL
-					}/api/payments/my-purchases/`,
+					`${import.meta.env.VITE_BACKEND_URL}/api/services/list/`,
 					{
 						headers: { Authorization: `Bearer ${token}` },
 					},
 				);
-				setPurchases(response.data.data.purchases);
+
+				const data = response.data.data;
+				if (Array.isArray(data)) {
+					setServices(data);
+					console.log(data);
+				} else if (data && Array.isArray(data.services)) {
+					setServices(data.services);
+					console.log(data.services);
+				} else {
+					setServices([]);
+				}
 			} catch (error) {
-				console.error("Error fetching purchases:", error);
-				setError("Failed to load purchased products");
+				console.error("Error fetching services:", error);
+				setError("Failed to load services");
 			} finally {
 				setLoading(false);
 			}
 		};
-		fetchPurchases();
+		fetchServices();
 	}, []);
 
 	if (loading) {
@@ -75,38 +83,60 @@ export default function MyPurchases() {
 	return (
 		<div className="min-h-[calc(100vh-4rem)] w-full bg-gray-50 py-12 px-4">
 			<div className="max-w-7xl mx-auto">
+				{/* Page Header */}
 				<div className="mb-8">
 					<h1 className="text-2xl font-semibold text-gray-900">
-						My Purchased Products
+						Services
 					</h1>
 					<p className="text-sm text-gray-500 mt-1">
-						Browse and manage products you have purchased.
+						Browse available services
 					</p>
 				</div>
 
-				{purchases.length === 0 ? (
+				{/* Services Grid */}
+				{services.length === 0 ? (
 					<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-16">
 						<div className="text-center">
+							<svg
+								className="w-16 h-16 text-gray-300 mx-auto mb-4"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="1.5"
+									d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+								/>
+							</svg>
 							<p className="text-gray-500 text-sm">
-								You haven't purchased any products yet.
+								No services available
 							</p>
 							<p className="text-gray-400 text-xs mt-1">
-								Products you buy will appear here.
+								Check back later for new services
 							</p>
 						</div>
 					</div>
 				) : (
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-						{purchases.map((purchase) => (
+						{services.map((service) => (
 							<ProductCard
-								key={purchase.id}
-								id={purchase.id}
-								image={purchase.product_image}
-								productName={purchase.product_name}
-								description="Purchased Product"
-								showBuyButton={false}
-								showDownloadButton={true}
-								disableNavigation={true}
+								key={service.service_code}
+								id={service.service_code}
+								image={service.image_url || service.image}
+								productName={service.name}
+								description={service.description}
+								price={
+									service.price
+										? `${service.currency || "INR"} ${
+												service.price
+											}`
+										: undefined
+								}
+								amount={service.price}
+								currency={service.currency}
+								basePath="/services"
 							/>
 						))}
 					</div>
@@ -115,3 +145,5 @@ export default function MyPurchases() {
 		</div>
 	);
 }
+
+export default Services;

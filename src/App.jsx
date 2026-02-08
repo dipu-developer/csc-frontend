@@ -13,10 +13,12 @@ import SideBar from "./Components/SideBar.jsx";
 import Wallet from "./Pages/Wallet.jsx";
 import Transactions from "./Pages/Transactions.jsx";
 import Assets from "./Pages/Assets.jsx";
-import MyPurchases from "./Pages/MyPurchases.jsx";
+import Services from "./Pages/Services.jsx";
 import PrivacyPolicy from "./Pages/PrivacyPolicy.jsx";
 import TC from "./Pages/TC.jsx";
 import AboutUs from "./Pages/AboutUs.jsx";
+
+import CardNumberFind from "./Pages/Services/CardNumberFind.jsx";
 
 function App() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -103,10 +105,18 @@ function App() {
 								}
 							/>
 							<Route
-								path="/my_purchases"
+								path="/services"
 								element={
 									<PrivateRoute>
-										<MyPurchases />
+										<Services />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path="/services/cardnumberfind"
+								element={
+									<PrivateRoute>
+										<CardNumberFind />
 									</PrivateRoute>
 								}
 							/>

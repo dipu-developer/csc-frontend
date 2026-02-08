@@ -14,6 +14,7 @@ export default function ProductCard({
 	showBuyButton = true,
 	showDownloadButton = false,
 	disableNavigation = false,
+	basePath = "/product",
 }) {
 	const navigate = useNavigate();
 	const [isDownloading, setIsDownloading] = useState(false);
@@ -75,7 +76,7 @@ export default function ProductCard({
 
 	return (
 		<div
-			onClick={() => !disableNavigation && navigate(`/product/${id}`)}
+			onClick={() => !disableNavigation && navigate(`${basePath}/${id}`)}
 			className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group ${
 				disableNavigation ? "" : "cursor-pointer"
 			}`}
@@ -115,7 +116,7 @@ export default function ProductCard({
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
-								navigate(`/product/${id}`);
+								navigate(`${basePath}/${id}`);
 							}}
 							className="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm"
 						>
