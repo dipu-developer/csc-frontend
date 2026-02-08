@@ -157,14 +157,14 @@ function Profile() {
 				{/* Profile Card */}
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 					{/* Header Section */}
-					<div className="bg-gradient-to-r from-blue-500 to-blue-600 h-32"></div>
+					<div className="bg-linear-to-r from-blue-500 to-blue-600 h-32"></div>
 
 					{/* Profile Content */}
 					<div className="px-8 pb-8">
 						{/* Avatar */}
 						<div className="-mt-16 mb-6">
 							<div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-white">
-								<div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-semibold">
+								<div className="w-24 h-24 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-semibold">
 									{profileData.first_name?.charAt(0)}
 									{profileData.last_name?.charAt(0)}
 								</div>

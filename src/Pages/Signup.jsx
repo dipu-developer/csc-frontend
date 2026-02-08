@@ -13,6 +13,7 @@ function Signup() {
 		referralCode: "",
 	});
 	const [error, setError] = useState("");
+	const [fieldErrors, setFieldErrors] = useState({});
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -25,10 +26,29 @@ function Signup() {
 			[name]: value,
 		}));
 		setError("");
+
+		const backendFieldMap = {
+			firstName: "first_name",
+			lastName: "last_name",
+			email: "email",
+			phoneNumber: "phone_number",
+			password: "password",
+			confirmPassword: "password_confirm",
+			referralCode: "referral_code",
+		};
+
+		if (backendFieldMap[name]) {
+			setFieldErrors((prev) => {
+				const newErrors = { ...prev };
+				delete newErrors[backendFieldMap[name]];
+				return newErrors;
+			});
+		}
 	};
 
 	const handleSignup = async (e) => {
 		e.preventDefault();
+		setFieldErrors({});
 
 		if (formData.password !== formData.confirmPassword) {
 			setError("Passwords do not match");
@@ -83,6 +103,9 @@ function Signup() {
 				const data = error.response.data;
 				console.error("Signup failed:", data);
 				let errorMessage = data.message || "Signup failed";
+				if (data.errors) {
+					setFieldErrors(data.errors);
+				}
 				if (data.errors) {
 					const errorDetails = Object.entries(data.errors)
 						.map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
@@ -170,6 +193,11 @@ function Signup() {
 								placeholder="you@example.com"
 								required
 							/>
+							{fieldErrors.email && (
+								<p className="mt-1 text-sm text-red-600">
+									{fieldErrors.email.join(" ")}
+								</p>
+							)}
 						</div>
 
 						<div>
@@ -186,10 +214,19 @@ function Signup() {
 								name="phoneNumber"
 								value={formData.phoneNumber}
 								onChange={handleChange}
-								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
+								className={`w-full px-4 py-2.5 bg-gray-50 border ${
+									fieldErrors.phone_number
+										? "border-red-500"
+										: "border-gray-200"
+								} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400`}
 								placeholder="+91 1234567890"
 								required
 							/>
+							{fieldErrors.phone_number && (
+								<p className="mt-1 text-sm text-red-600">
+									{fieldErrors.phone_number.join(" ")}
+								</p>
+							)}
 						</div>
 
 						<div>
@@ -224,7 +261,11 @@ function Signup() {
 									name="password"
 									value={formData.password}
 									onChange={handleChange}
-									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400 pr-11"
+									className={`w-full px-4 py-2.5 bg-gray-50 border ${
+										fieldErrors.password
+											? "border-red-500"
+											: "border-gray-200"
+									} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400 pr-11`}
 									placeholder="Create a strong password"
 									required
 								/>
@@ -278,6 +319,11 @@ function Signup() {
 									)}
 								</button>
 							</div>
+							{fieldErrors.password && (
+								<p className="mt-1 text-sm text-red-600">
+									{fieldErrors.password.join(" ")}
+								</p>
+							)}
 						</div>
 
 						<div>
@@ -356,11 +402,11 @@ function Signup() {
 							</div>
 						</div>
 
-						{error && (
+						{/* {error && (
 							<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm whitespace-pre-line">
 								{error}
 							</div>
-						)}
+						)} */}
 
 						<button
 							type="submit"
