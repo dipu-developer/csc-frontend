@@ -108,12 +108,14 @@ export default function Wallet() {
 						alert("Payment Successful! Wallet updated.");
 						setTopUpAmount("");
 						fetchWalletData();
+						window.dispatchEvent(new Event("walletUpdated"));
 					} catch (verifyErr) {
 						console.error(verifyErr);
 						alert(
 							"Payment verification failed, but if money was deducted it will be refunded or credited shortly.",
 						);
 						fetchWalletData();
+						window.dispatchEvent(new Event("walletUpdated"));
 					}
 				},
 				theme: {

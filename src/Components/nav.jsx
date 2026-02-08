@@ -64,12 +64,14 @@ export default function Nav({ toggleSidebar, isSidebarOpen }) {
 
 		window.addEventListener("storage", onStorage);
 		window.addEventListener("authChanged", updateAuthState);
+		window.addEventListener("walletUpdated", fetchWalletBalance);
 		// initialize
 		updateAuthState();
 
 		return () => {
 			window.removeEventListener("storage", onStorage);
 			window.removeEventListener("authChanged", updateAuthState);
+			window.removeEventListener("walletUpdated", fetchWalletBalance);
 		};
 	}, []);
 
@@ -172,7 +174,7 @@ export default function Nav({ toggleSidebar, isSidebarOpen }) {
 								</Link>
 								<Link
 									to="/profile"
-									className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm hover:shadow-md transition-shadow"
+									className="w-9 h-9 bg-linear-to-br from-blue-500 to-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm hover:shadow-md transition-shadow"
 								>
 									{userName.charAt(0).toUpperCase()}
 								</Link>
