@@ -51,25 +51,32 @@ function Signup() {
 
 			const data = response.data;
 
-			localStorage.setItem("authUser", JSON.stringify(data.data.user));
+			if (data.data && data.data.tokens) {
+				localStorage.setItem(
+					"authUser",
+					JSON.stringify(data.data.user),
+				);
 
-			const accessDate = new Date();
-			accessDate.setTime(
-				accessDate.getTime() +
-					data.data.ACCESS_TOKEN_LIFETIME * 24 * 60 * 60 * 1000,
-			);
-			document.cookie = `authToken=${data.data.tokens.access}; expires=${accessDate.toUTCString()}; path=/`;
+				const accessDate = new Date();
+				accessDate.setTime(
+					accessDate.getTime() +
+						data.data.ACCESS_TOKEN_LIFETIME * 24 * 60 * 60 * 1000,
+				);
+				document.cookie = `authToken=${data.data.tokens.access}; expires=${accessDate.toUTCString()}; path=/`;
 
-			const refreshDate = new Date();
-			refreshDate.setTime(
-				refreshDate.getTime() +
-					data.data.REFRESH_TOKEN_LIFETIME * 24 * 60 * 60 * 1000,
-			);
-			document.cookie = `refreshToken=${data.data.tokens.refresh}; expires=${refreshDate.toUTCString()}; path=/`;
+				const refreshDate = new Date();
+				refreshDate.setTime(
+					refreshDate.getTime() +
+						data.data.REFRESH_TOKEN_LIFETIME * 24 * 60 * 60 * 1000,
+				);
+				document.cookie = `refreshToken=${data.data.tokens.refresh}; expires=${refreshDate.toUTCString()}; path=/`;
 
-			window.dispatchEvent(new Event("authChanged"));
-			console.log("Signup successful:", data);
-			navigate("/");
+				window.dispatchEvent(new Event("authChanged"));
+				console.log("Signup successful:", data);
+				navigate("/");
+			} else {
+				navigate("/login");
+			}
 		} catch (error) {
 			console.error("Signup error:", error);
 			if (error.response) {
@@ -197,7 +204,6 @@ function Signup() {
 								onChange={handleChange}
 								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
 								placeholder="Enter code"
-								required
 							/>
 						</div>
 

@@ -7,7 +7,7 @@ import "@fontsource/montserrat";
 import "@fontsource/montserrat/400.css";
 
 createRoot(document.getElementById("root")).render(
-	<StrictMode>
+	<>
 		<App />
-	</StrictMode>,
+	</>,
 );
