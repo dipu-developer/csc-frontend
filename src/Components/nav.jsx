@@ -80,7 +80,7 @@ export default function Nav({ toggleSidebar, isSidebarOpen }) {
 			<div className="w-full px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between items-center h-16">
 					{/* Left Side - Logo & Hamburger */}
-					<div className="flex items-center gap-4">
+					<div className="flex items-center gap-2 sm:gap-4">
 						{isLoggedIn && (
 							<button
 								onClick={toggleSidebar}
@@ -121,15 +121,15 @@ export default function Nav({ toggleSidebar, isSidebarOpen }) {
 							</button>
 						)}
 						<Link to="/" className="flex items-center gap-2">
-							<div className="text-2xl">🎯</div>
-							<span className="text-lg font-semibold text-gray-900">
+							<div className="text-xl sm:text-2xl">🎯</div>
+							<span className="text-base sm:text-lg font-semibold text-gray-900">
 								CSC Solutions
 							</span>
 						</Link>
 					</div>
 
 					{/* Right Side - Links or User Avatar */}
-					<div className="flex items-center gap-6">
+					<div className="flex items-center gap-3 sm:gap-6">
 						{!isLoggedIn ? (
 							<>
 								<Link
@@ -140,7 +140,7 @@ export default function Nav({ toggleSidebar, isSidebarOpen }) {
 								</Link>
 								<Link
 									to="/signup"
-									className="text-sm font-medium bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+									className="text-sm font-medium bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 transition-colors"
 								>
 									Sign Up
 								</Link>

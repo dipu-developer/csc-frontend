@@ -212,11 +212,11 @@ export default function Wallet() {
 	}
 
 	return (
-		<div className="min-h-screen w-full bg-gray-50 py-12 px-4">
+		<div className="min-h-screen w-full bg-gray-50 py-6 sm:py-12 px-4">
 			<div className="max-w-4xl mx-auto">
 				{/* Page Header */}
-				<div className="mb-8">
-					<h1 className="text-2xl font-semibold text-gray-900">
+				<div className="mb-6 sm:mb-8">
+					<h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
 						Wallet
 					</h1>
 					<p className="text-sm text-gray-500 mt-1">
@@ -226,13 +226,13 @@ export default function Wallet() {
 
 				{/* Balance Card */}
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
-					<div className="bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-8">
+					<div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 sm:p-8">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-blue-100 text-sm mb-2">
+								<p className="text-blue-100 text-sm mb-1 sm:mb-2">
 									Available Balance
 								</p>
-								<p className="text-white text-3xl font-semibold">
+								<p className="text-white text-2xl sm:text-3xl font-semibold">
 									{wallet?.currency}{" "}
 									{wallet?.balance || "0.00"}
 								</p>
@@ -255,8 +255,8 @@ export default function Wallet() {
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 					{/* Add Money Card */}
 					<div className="lg:col-span-1">
-						<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-							<h2 className="text-lg font-semibold text-gray-900 mb-5">
+						<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+							<h2 className="text-lg font-semibold text-gray-900 mb-4 sm:mb-5">
 								Add Money
 							</h2>
 							<form onSubmit={handleTopUp} className="space-y-4">
@@ -301,8 +301,8 @@ export default function Wallet() {
 
 					{/* Recent Transactions */}
 					<div className="lg:col-span-2">
-						<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-							<h2 className="text-lg font-semibold text-gray-900 mb-5">
+						<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+							<h2 className="text-lg font-semibold text-gray-900 mb-4 sm:mb-5">
 								Recent Transactions
 							</h2>
 

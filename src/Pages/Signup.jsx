@@ -97,10 +97,10 @@ function Signup() {
 	};
 
 	return (
-		<div className="min-h-screen w-full flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8">
+		<div className="min-h-screen w-full flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4 py-6 sm:py-8">
 			<div className="w-full max-w-lg">
-				<div className="text-center mb-8">
-					<h1 className="text-3xl font-semibold text-gray-900 mb-2">
+				<div className="text-center mb-6 sm:mb-8">
+					<h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">
 						Create your account
 					</h1>
 					<p className="text-gray-600 text-sm">
@@ -108,9 +108,12 @@ function Signup() {
 					</p>
 				</div>
 
-				<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-					<form onSubmit={handleSignup} className="space-y-5">
-						<div className="grid grid-cols-2 gap-4">
+				<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+					<form
+						onSubmit={handleSignup}
+						className="space-y-4 sm:space-y-5"
+					>
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<div>
 								<label
 									htmlFor="firstName"
