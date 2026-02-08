@@ -2,23 +2,27 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Nav from "./Components/nav.jsx";
-import Home from "./Pages/Home.jsx";
-import Login from "./Pages/Login.jsx";
-import Signup from "./Pages/Signup.jsx";
+// components
 import PrivateRoute from "./Components/PrivateRoute.jsx";
-import Profile from "./Pages/Profile.jsx";
-import Product from "./Pages/Product.jsx";
 import SideBar from "./Components/SideBar.jsx";
-import Wallet from "./Pages/Wallet.jsx";
-import Transactions from "./Pages/Transactions.jsx";
-import Assets from "./Pages/Assets.jsx";
-import Services from "./Pages/Services.jsx";
-import PrivacyPolicy from "./Pages/PrivacyPolicy.jsx";
-import TC from "./Pages/TC.jsx";
-import AboutUs from "./Pages/AboutUs.jsx";
+import Nav from "./Components/nav.jsx";
 
+// pages
+import Login from "./Pages/Auth/Login.jsx";
+import Signup from "./Pages/Auth/Signup.jsx";
+import Home from "./Pages/Home.jsx";
+import Product from "./Pages/Product.jsx";
+import Assets from "./Pages/Assets.jsx";
+import Profile from "./Pages/Account/Profile.jsx";
+import Wallet from "./Pages/Account/Wallet.jsx";
+import Transactions from "./Pages/Account/Transactions.jsx";
+import Services from "./Pages/Services/Services.jsx";
 import CardNumberFind from "./Pages/Services/CardNumberFind.jsx";
+
+// quick links
+import PrivacyPolicy from "./Pages/Quick Links/PrivacyPolicy.jsx";
+import TC from "./Pages/Quick Links/TC.jsx";
+import AboutUs from "./Pages/Quick Links/AboutUs.jsx";
 
 function App() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
