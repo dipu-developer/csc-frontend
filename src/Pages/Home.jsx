@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import ProductCard from "../Components/ProductCard";
+import React from "react";
+
+import Footer from "../Components/Footer";
 
 function Home() {
-	return <h1>Home Page</h1>;
+	return (
+		<div className="min-h-[calc(100vh-4rem)] flex flex-col w-full">
+			<div className="flex grow p-4">
+				<h1 className="text-2xl font-bold text-center">Home Page</h1>
+			</div>
+			<Footer />
+		</div>
+	);
 }
 
 export default Home;

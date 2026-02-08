@@ -14,6 +14,9 @@ import Wallet from "./Pages/Wallet.jsx";
 import Transactions from "./Pages/Transactions.jsx";
 import Assets from "./Pages/Assets.jsx";
 import MyPurchases from "./Pages/MyPurchases.jsx";
+import PrivacyPolicy from "./Pages/PrivacyPolicy.jsx";
+import TC from "./Pages/TC.jsx";
+import AboutUs from "./Pages/AboutUs.jsx";
 
 function App() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -107,6 +110,12 @@ function App() {
 									</PrivateRoute>
 								}
 							/>
+							<Route
+								path="/privacy_policy"
+								element={<PrivacyPolicy />}
+							/>
+							<Route path="/tc" element={<TC />} />
+							<Route path="/about_us" element={<AboutUs />} />
 						</Routes>
 					</div>
 				</div>
