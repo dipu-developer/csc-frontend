@@ -205,14 +205,14 @@ export default function Wallet() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+			<div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center bg-gray-50">
 				<div className="text-gray-500 text-lg">Loading...</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen w-full bg-gray-50 py-6 sm:py-12 px-4">
+		<div className="min-h-[calc(100vh-4rem)] w-full bg-gray-50 py-6 sm:py-12 px-4">
 			<div className="max-w-4xl mx-auto">
 				{/* Page Header */}
 				<div className="mb-6 sm:mb-8">
