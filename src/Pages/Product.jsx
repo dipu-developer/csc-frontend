@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import PaymentComponent from "../Components/PaymentComponent";
+import LowBalancePopUp from "../Components/LowBalancePopUp";
 
 export default function Product() {
 	const { id } = useParams();
@@ -10,6 +10,9 @@ export default function Product() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+	const [showBalanceModal, setShowBalanceModal] = useState(false);
+	const [balanceInfo, setBalanceInfo] = useState(null);
+	const [purchasing, setPurchasing] = useState(false);
 
 	useEffect(() => {
 		const fetchProduct = async () => {
@@ -45,6 +48,67 @@ export default function Product() {
 		};
 		fetchProduct();
 	}, [id]);
+
+	const handlePurchase = async () => {
+		try {
+			setPurchasing(true);
+			const getCookie = (name) => {
+				const value = `; ${document.cookie}`;
+				const parts = value.split(`; ${name}=`);
+				if (parts.length === 2) return parts.pop().split(";").shift();
+				return null;
+			};
+			const token = getCookie("authToken");
+
+			if (!token) {
+				navigate("/login");
+				return;
+			}
+
+			// Check wallet balance first
+			const balanceResponse = await axios.get(
+				`${import.meta.env.VITE_BACKEND_URL}/api/payments/wallet/balance/`,
+				{ headers: { Authorization: `Bearer ${token}` } },
+			);
+			const walletBalance = parseFloat(balanceResponse.data.data.balance);
+			const productPrice = parseFloat(product.price);
+
+			if (walletBalance < productPrice) {
+				setBalanceInfo({
+					required: productPrice.toFixed(2),
+					available: walletBalance.toFixed(2),
+					shortfall: (productPrice - walletBalance).toFixed(2),
+				});
+				setShowBalanceModal(true);
+				return;
+			}
+
+			await axios.post(
+				`${import.meta.env.VITE_BACKEND_URL}/api/payments/purchase/`,
+				{ product_id: product.id },
+				{ headers: { Authorization: `Bearer ${token}` } },
+			);
+
+			alert("Purchase successful!");
+			window.location.reload();
+		} catch (error) {
+			console.error("Purchase error:", error);
+			if (
+				error.response?.status === 400 &&
+				error.response.data.message === "Insufficient wallet balance"
+			) {
+				setBalanceInfo(error.response.data.data);
+				setShowBalanceModal(true);
+			} else {
+				alert(
+					error.response?.data?.message ||
+						"Failed to purchase product",
+				);
+			}
+		} finally {
+			setPurchasing(false);
+		}
+	};
 
 	if (loading) {
 		return (
@@ -189,7 +253,7 @@ export default function Product() {
 								<div className="space-y-3">
 									<div className="flex items-start gap-3">
 										<svg
-											className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0"
+											className="w-5 h-5 text-green-600 mt-0.5 flex shrink-0"
 											fill="none"
 											viewBox="0 0 24 24"
 											stroke="currentColor"
@@ -213,7 +277,7 @@ export default function Product() {
 									</div>
 									<div className="flex items-start gap-3">
 										<svg
-											className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
+											className="w-5 h-5 text-blue-600 mt-0.5 flex shrink-0"
 											fill="none"
 											viewBox="0 0 24 24"
 											stroke="currentColor"
@@ -237,7 +301,7 @@ export default function Product() {
 									</div>
 									<div className="flex items-start gap-3">
 										<svg
-											className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0"
+											className="w-5 h-5 text-purple-600 mt-0.5 flex shrink-0"
 											fill="none"
 											viewBox="0 0 24 24"
 											stroke="currentColor"
@@ -263,13 +327,37 @@ export default function Product() {
 
 							{/* Purchase Button */}
 							<div className="mt-auto">
-								<PaymentComponent
-									productId={product.id}
-									productName={product.name}
-									description={product.description}
-									amount={product.price}
-									currency={product.currency}
-								/>
+								{product.is_purchased ? (
+									<button
+										disabled
+										className="w-full bg-green-50 text-green-700 font-medium py-3 px-4 rounded-lg border border-green-200 cursor-default flex items-center justify-center gap-2"
+									>
+										<svg
+											className="w-5 h-5"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M5 13l4 4L19 7"
+											/>
+										</svg>
+										Purchased
+									</button>
+								) : (
+									<button
+										onClick={handlePurchase}
+										disabled={purchasing}
+										className="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									>
+										{purchasing
+											? "Processing..."
+											: `Buy Now for ${product.currency} ${product.price}`}
+									</button>
+								)}
 							</div>
 						</div>
 					</div>
@@ -279,7 +367,7 @@ export default function Product() {
 				<div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
 					<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
 						<div className="flex items-start gap-3">
-							<div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+							<div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
 								<svg
 									className="w-5 h-5 text-blue-600"
 									fill="none"
@@ -307,7 +395,7 @@ export default function Product() {
 
 					<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
 						<div className="flex items-start gap-3">
-							<div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+							<div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
 								<svg
 									className="w-5 h-5 text-green-600"
 									fill="none"
@@ -335,7 +423,7 @@ export default function Product() {
 
 					<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
 						<div className="flex items-start gap-3">
-							<div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+							<div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
 								<svg
 									className="w-5 h-5 text-purple-600"
 									fill="none"
@@ -362,6 +450,14 @@ export default function Product() {
 					</div>
 				</div>
 			</div>
+
+			{/* Low Balance Modal */}
+			<LowBalancePopUp
+				isOpen={showBalanceModal}
+				onClose={() => setShowBalanceModal(false)}
+				balanceInfo={balanceInfo}
+				currency={product.currency}
+			/>
 		</div>
 	);
 }
