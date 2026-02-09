@@ -27,8 +27,8 @@ export default function CardNumberFind() {
 					headers: { Authorization: `Bearer ${token}` },
 				},
 			);
-			console.log(response.data);
-			setResult(response.data);
+			console.log(response.data.data);
+			setResult(response.data.data);
 			window.dispatchEvent(new Event("walletUpdated"));
 		} catch (error) {
 			console.error("Error:", error);

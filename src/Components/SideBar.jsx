@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-export default function SideBar({ isOpen }) {
+export default function SideBar({ isOpen, closeSidebar }) {
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -40,6 +40,12 @@ export default function SideBar({ isOpen }) {
 	};
 
 	const isActive = (path) => location.pathname === path;
+
+	const handleLinkClick = () => {
+		if (window.innerWidth < 1024 && closeSidebar) {
+			closeSidebar();
+		}
+	};
 
 	const navItems = [
 		{
@@ -152,6 +158,7 @@ export default function SideBar({ isOpen }) {
 						<Link
 							key={item.path}
 							to={item.path}
+							onClick={handleLinkClick}
 							className={`flex items-center gap-3 rounded-lg text-sm font-medium transition-colors ${
 								isActive(item.path)
 									? "bg-blue-50 text-blue-600"

@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ProductCard from "../../Components/ProductCard";
+import ServiceCard from "../../Components/Cards/ServiceCard";
+import InfoPopup from "../../Components/PopUp/InfoPopup";
 
 function Services() {
+	const navigate = useNavigate();
 	const [services, setServices] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 
 	useEffect(() => {
 		const fetchServices = async () => {
@@ -39,14 +48,21 @@ function Services() {
 				}
 			} catch (error) {
 				console.error("Error fetching services:", error);
-				setError("Failed to load services");
+				if (error.response && error.status === 403) {
+					setInfoPopupState({
+						isOpen: true,
+						title: "Pro Feature Only",
+						description:
+							"This feature is available for PRO users only.",
+						onClose: () => navigate("/"),
+					});
+				}
 			} finally {
 				setLoading(false);
 			}
 		};
 		fetchServices();
 	}, []);
-
 	if (loading) {
 		return (
 			<div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center bg-gray-50">
@@ -121,10 +137,9 @@ function Services() {
 				) : (
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 						{services.map((service) => (
-							<ProductCard
+							<ServiceCard
 								key={service.service_code}
 								id={service.service_code}
-								image={service.image_url || service.image}
 								productName={service.name}
 								description={service.description}
 								price={
@@ -142,6 +157,15 @@ function Services() {
 					</div>
 				)}
 			</div>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
+			/>
 		</div>
 	);
 }

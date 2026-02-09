@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import InfoPopup from "./PopUp/InfoPopup";
+import InfoPopup from "../PopUp/InfoPopup";
 
 export default function ProductCard({
 	id,
