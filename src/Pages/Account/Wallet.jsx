@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import InfoPopup from "../../Components/InfoPopup";
 
 export default function Wallet() {
 	const [wallet, setWallet] = useState(null);
@@ -8,6 +9,12 @@ export default function Wallet() {
 	const [topUpAmount, setTopUpAmount] = useState("");
 	const [isSdkLoaded, setIsSdkLoaded] = useState(false);
 	const [error, setError] = useState(null);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 
 	const getCookie = (name) => {
 		const value = `; ${document.cookie}`;
@@ -64,11 +71,19 @@ export default function Wallet() {
 	const handleTopUp = async (e) => {
 		e.preventDefault();
 		if (!isSdkLoaded) {
-			alert("Razorpay SDK is loading. Please wait...");
+			setInfoPopupState({
+				isOpen: true,
+				title: "Please Wait",
+				description: "Razorpay SDK is loading. Please wait...",
+			});
 			return;
 		}
 		if (!topUpAmount || isNaN(topUpAmount) || Number(topUpAmount) <= 0) {
-			alert("Please enter a valid amount");
+			setInfoPopupState({
+				isOpen: true,
+				title: "Invalid Amount",
+				description: "Please enter a valid amount",
+			});
 			return;
 		}
 
@@ -105,15 +120,22 @@ export default function Wallet() {
 							},
 							{ headers: { Authorization: `Bearer ${token}` } },
 						);
-						alert("Payment Successful! Wallet updated.");
+						setInfoPopupState({
+							isOpen: true,
+							title: "Success",
+							description: "Payment Successful! Wallet updated.",
+						});
 						setTopUpAmount("");
 						fetchWalletData();
 						window.dispatchEvent(new Event("walletUpdated"));
 					} catch (verifyErr) {
 						console.error(verifyErr);
-						alert(
-							"Payment verification failed, but if money was deducted it will be refunded or credited shortly.",
-						);
+						setInfoPopupState({
+							isOpen: true,
+							title: "Verification Failed",
+							description:
+								"Payment verification failed, but if money was deducted it will be refunded or credited shortly.",
+						});
 						fetchWalletData();
 						window.dispatchEvent(new Event("walletUpdated"));
 					}
@@ -127,7 +149,12 @@ export default function Wallet() {
 			rzp1.open();
 		} catch (err) {
 			console.error("Top-up error:", err);
-			alert(err.response?.data?.message || "Failed to initiate top-up");
+			setInfoPopupState({
+				isOpen: true,
+				title: "Error",
+				description:
+					err.response?.data?.message || "Failed to initiate top-up",
+			});
 		}
 	};
 
@@ -388,6 +415,15 @@ export default function Wallet() {
 					</div>
 				</div>
 			</div>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
+			/>
 		</div>
 	);
 }

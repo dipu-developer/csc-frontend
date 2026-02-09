@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import LowBalancePopUp from "../Components/LowBalancePopUp";
+import InfoPopup from "../Components/InfoPopup";
 
 export default function Product() {
 	const { id } = useParams();
@@ -13,6 +14,12 @@ export default function Product() {
 	const [showBalanceModal, setShowBalanceModal] = useState(false);
 	const [balanceInfo, setBalanceInfo] = useState(null);
 	const [purchasing, setPurchasing] = useState(false);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 
 	useEffect(() => {
 		const fetchProduct = async () => {
@@ -89,8 +96,12 @@ export default function Product() {
 				{ headers: { Authorization: `Bearer ${token}` } },
 			);
 
-			alert("Purchase successful!");
-			window.location.reload();
+			setInfoPopupState({
+				isOpen: true,
+				title: "Success",
+				description: "Purchase successful!",
+				onClose: () => window.location.reload(),
+			});
 		} catch (error) {
 			console.error("Purchase error:", error);
 			if (
@@ -100,10 +111,13 @@ export default function Product() {
 				setBalanceInfo(error.response.data.data);
 				setShowBalanceModal(true);
 			} else {
-				alert(
-					error.response?.data?.message ||
+				setInfoPopupState({
+					isOpen: true,
+					title: "Error",
+					description:
+						error.response?.data?.message ||
 						"Failed to purchase product",
-				);
+				});
 			}
 		} finally {
 			setPurchasing(false);
@@ -457,6 +471,15 @@ export default function Product() {
 				onClose={() => setShowBalanceModal(false)}
 				balanceInfo={balanceInfo}
 				currency={product.currency}
+			/>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
 			/>
 		</div>
 	);

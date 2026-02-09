@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import InfoPopup from "./InfoPopup";
 
 const PaymentComponent = ({
 	productId,
@@ -11,11 +12,22 @@ const PaymentComponent = ({
 }) => {
 	const [loading, setLoading] = useState(false);
 	const [throttled, setThrottled] = useState(false);
+	const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 	const navigate = useNavigate();
 
 	const handlePayment = async () => {
 		if (!productId) {
-			alert("Invalid product");
+			setInfoPopupState({
+				isOpen: true,
+				title: "Error",
+				description: "Invalid product",
+			});
 			return;
 		}
 
@@ -34,8 +46,12 @@ const PaymentComponent = ({
 			const token = getCookie("authToken");
 
 			if (!token) {
-				alert("Please login to purchase products.");
-				navigate("/login");
+				setInfoPopupState({
+					isOpen: true,
+					title: "Authentication Required",
+					description: "Please login to purchase products.",
+					onClose: () => navigate("/login"),
+				});
 				return;
 			}
 
@@ -48,8 +64,7 @@ const PaymentComponent = ({
 				},
 			);
 
-			alert("Purchase Successful!");
-			navigate("/my_purchases");
+			setShowSuccessPopup(true);
 		} catch (err) {
 			console.error(err);
 			let msg;
@@ -72,27 +87,53 @@ const PaymentComponent = ({
 					"Purchase error: " + err.message;
 			}
 
-			alert(msg);
-			if (msg && msg.toLowerCase().includes("wallet")) {
-				navigate("/wallet");
-			}
+			setInfoPopupState({
+				isOpen: true,
+				title: "Error",
+				description: msg,
+				onClose: () => {
+					if (msg && msg.toLowerCase().includes("wallet")) {
+						navigate("/wallet");
+					}
+				},
+			});
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	return (
-		<button
-			onClick={handlePayment}
-			disabled={loading || throttled}
-			className="bg-blue-500 text-white px-3 py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200 disabled:opacity-50"
-		>
-			{loading
-				? "Processing..."
-				: throttled
-					? "Please wait..."
-					: "Buy Now"}
-		</button>
+		<>
+			<button
+				onClick={handlePayment}
+				disabled={loading || throttled}
+				className="bg-blue-500 text-white px-3 py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200 disabled:opacity-50"
+			>
+				{loading
+					? "Processing..."
+					: throttled
+						? "Please wait..."
+						: "Buy Now"}
+			</button>
+			<InfoPopup
+				isOpen={showSuccessPopup}
+				onClose={() => {
+					setShowSuccessPopup(false);
+					navigate("/my_purchases");
+				}}
+				title="Purchase Successful!"
+				description={`You have successfully purchased ${productName}.`}
+			/>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
+			/>
+		</>
 	);
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import InfoPopup from "../../Components/InfoPopup";
 
 function Profile() {
 	const [profileData, setProfileData] = useState(null);
@@ -13,6 +14,12 @@ function Profile() {
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 	const navigate = useNavigate();
 
 	const getCookie = (name) => {
@@ -75,7 +82,11 @@ function Profile() {
 	const submitPasswordReset = async (e) => {
 		e.preventDefault();
 		if (passwordData.new_password !== passwordData.new_password_confirm) {
-			alert("New passwords do not match");
+			setInfoPopupState({
+				isOpen: true,
+				title: "Error",
+				description: "New passwords do not match",
+			});
 			return;
 		}
 
@@ -91,7 +102,11 @@ function Profile() {
 				},
 			);
 
-			alert("Password changed successfully");
+			setInfoPopupState({
+				isOpen: true,
+				title: "Success",
+				description: "Password changed successfully",
+			});
 			setShowPasswordReset(false);
 			setPasswordData({
 				old_password: "",
@@ -110,9 +125,17 @@ function Profile() {
 						.join("\n");
 					errorMessage += `\n${errorDetails}`;
 				}
-				alert(errorMessage);
+				setInfoPopupState({
+					isOpen: true,
+					title: "Error",
+					description: errorMessage,
+				});
 			} else {
-				alert("An error occurred. Please try again.");
+				setInfoPopupState({
+					isOpen: true,
+					title: "Error",
+					description: "An error occurred. Please try again.",
+				});
 			}
 		}
 	};
@@ -456,6 +479,15 @@ function Profile() {
 					</div>
 				)}
 			</div>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
+			/>
 		</div>
 	);
 }

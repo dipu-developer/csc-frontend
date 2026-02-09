@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PaymentComponent from "./PaymentComponent";
+import InfoPopup from "./InfoPopup";
 
 export default function ProductCard({
 	id,
@@ -18,6 +19,12 @@ export default function ProductCard({
 }) {
 	const navigate = useNavigate();
 	const [isDownloading, setIsDownloading] = useState(false);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 
 	// Placeholder image if none provided
 	const displayImage =
@@ -38,7 +45,12 @@ export default function ProductCard({
 			const token = getCookie("authToken");
 
 			if (!token) {
-				alert("Please login to download.");
+				setInfoPopupState({
+					isOpen: true,
+					title: "Authentication Required",
+					description: "Please login to download.",
+					onClose: () => navigate("/login"),
+				});
 				return;
 			}
 
@@ -65,10 +77,13 @@ export default function ProductCard({
 			}
 		} catch (error) {
 			console.error("Download failed:", error);
-			alert(
-				error.response?.data?.message ||
+			setInfoPopupState({
+				isOpen: true,
+				title: "Download Failed",
+				description:
+					error.response?.data?.message ||
 					"Failed to download file. Please try again.",
-			);
+			});
 		} finally {
 			setIsDownloading(false);
 		}
@@ -133,6 +148,15 @@ export default function ProductCard({
 					) : null}
 				</div>
 			</div>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
+			/>
 		</div>
 	);
 }
