@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import LowBalancePopUp from "../../Components/LowBalancePopUp";
 
 export default function CardNumberFind() {
 	const [name, setName] = useState("");
@@ -21,25 +20,6 @@ export default function CardNumberFind() {
 				return null;
 			};
 			const token = getCookie("authToken");
-
-			const balanceResponse = await axios.get(
-				`${import.meta.env.VITE_BACKEND_URL}/api/payments/wallet/balance/`,
-				{ headers: { Authorization: `Bearer ${token}` } },
-			);
-			const walletData = balanceResponse.data.data;
-			const walletBalance = parseFloat(walletData.balance);
-			const requiredAmount = 10.0;
-
-			if (walletBalance < requiredAmount) {
-				setBalanceInfo({
-					required: requiredAmount.toFixed(2),
-					available: walletBalance.toFixed(2),
-					shortfall: (requiredAmount - walletBalance).toFixed(2),
-					currency: walletData.currency,
-				});
-				setShowBalanceModal(true);
-				return;
-			}
 
 			const response = await axios.get(
 				`${import.meta.env.VITE_BACKEND_URL}/api/services/cardnumberfind/?name=${name}`,
@@ -126,12 +106,6 @@ export default function CardNumberFind() {
 					)}
 				</div>
 			</div>
-			<LowBalancePopUp
-				isOpen={showBalanceModal}
-				onClose={() => setShowBalanceModal(false)}
-				balanceInfo={balanceInfo}
-				currency={balanceInfo?.currency || "INR"}
-			/>
 		</div>
 	);
 }
