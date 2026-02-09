@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import LowBalancePopUp from "../Components/LowBalancePopUp";
-import InfoPopup from "../Components/InfoPopup";
+import LowBalancePopUp from "../Components/PopUp/LowBalancePopUp";
+import InfoPopup from "../Components/PopUp/InfoPopup";
 
 export default function Product() {
 	const { id } = useParams();

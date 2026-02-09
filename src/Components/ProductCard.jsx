@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import PaymentComponent from "./PaymentComponent";
-import InfoPopup from "./InfoPopup";
+import InfoPopup from "./PopUp/InfoPopup";
 
 export default function ProductCard({
 	id,

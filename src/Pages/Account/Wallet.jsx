@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import InfoPopup from "../../Components/InfoPopup";
+import InfoPopup from "../../Components/PopUp/InfoPopup";
 
 export default function Wallet() {
 	const [wallet, setWallet] = useState(null);
