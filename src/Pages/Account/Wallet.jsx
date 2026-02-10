@@ -153,7 +153,9 @@ export default function Wallet() {
 				isOpen: true,
 				title: "Error",
 				description:
-					err.response?.data?.message || "Failed to initiate top-up",
+					err.response?.data?.errors.amount ||
+					err.response?.data?.message ||
+					"Failed to initiate top-up",
 			});
 		}
 	};
