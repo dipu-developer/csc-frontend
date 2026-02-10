@@ -5,8 +5,6 @@ export default function CardNumberFind() {
 	const [name, setName] = useState("");
 	const [result, setResult] = useState(null);
 	const [loading, setLoading] = useState(false);
-	const [showBalanceModal, setShowBalanceModal] = useState(false);
-	const [balanceInfo, setBalanceInfo] = useState(null);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
