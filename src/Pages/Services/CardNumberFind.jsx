@@ -1,16 +1,30 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import ConfirmPopup from "../../Components/PopUp/ConfirmPopup";
+import InfoPopup from "../../Components/PopUp/InfoPopup";
 
 export default function CardNumberFind() {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [result, setResult] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [showConfirm, setShowConfirm] = useState(false);
+	const [infoPopup, setInfoPopup] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 	const { price } = location.state || {};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
+		setShowConfirm(true);
+	};
+
+	const executeSearch = async () => {
 		setLoading(true);
 		setResult(null);
 		try {
@@ -29,11 +43,18 @@ export default function CardNumberFind() {
 				},
 			);
 			console.log(response.data.data);
-			setResult(response.data.data);
+			setResult(response.data.data.results[0]);
 			window.dispatchEvent(new Event("walletUpdated"));
 		} catch (error) {
 			console.error("Error:", error);
-			setResult({ error: "An error occurred while fetching data." });
+			setInfoPopup({
+				isOpen: true,
+				title: "Error",
+				description:
+					error.response?.data?.message ||
+					"An error occurred while fetching data.",
+				onClose: () => navigate("/wallet"),
+			});
 		} finally {
 			setLoading(false);
 		}
@@ -108,6 +129,24 @@ export default function CardNumberFind() {
 					)}
 				</div>
 			</div>
+			<ConfirmPopup
+				isOpen={showConfirm}
+				onClose={() => setShowConfirm(false)}
+				onConfirm={executeSearch}
+				title="Confirm Search"
+				description={`Are you sure you want to search for "${name}"?`}
+				price={price}
+				confirmText="Search"
+			/>
+			<InfoPopup
+				isOpen={infoPopup.isOpen}
+				onClose={() => {
+					setInfoPopup({ ...infoPopup, isOpen: false });
+					if (infoPopup.onClose) infoPopup.onClose();
+				}}
+				title={infoPopup.title}
+				description={infoPopup.description}
+			/>
 		</div>
 	);
 }
