@@ -101,40 +101,48 @@ function Login() {
 						return;
 					}
 
-					const handlePayment = (amount, currency, user) => {
+					try {
+						const orderResponse = await axios.post(
+							`${import.meta.env.VITE_BACKEND_URL}/api/payments/register/topup/`,
+							{
+								amount: settingsData.data.registration_fee
+									.amount,
+							},
+							{
+								headers: {
+									Authorization: `Bearer ${data.data.tokens.access}`,
+								},
+							},
+						);
+
+						const { order_id, amount, currency, razorpay_key } =
+							orderResponse.data.data;
+
 						const options = {
-							key: import.meta.env.VITE_RAZORPAY_KEY,
-							amount: amount * 100,
-							currency: currency || "INR",
+							key:
+								razorpay_key ||
+								import.meta.env.VITE_RAZORPAY_KEY,
+							amount: Math.round(amount * 100),
+							currency: currency,
 							name: "CSC Solutions",
 							description: "Registration Fee",
-							handler: function (response) {
-								console.log(
-									"Payment successful, response: ",
-									response,
+							order_id: order_id,
+							handler: async (response) => {
+								navigate("/"); // Navigate to home/dashboard after successful payment
+								window.dispatchEvent(
+									new Event("walletUpdated"),
 								);
-								setInfoPopupState({
-									isOpen: true,
-									title: "Payment Successful",
-									description:
-										"Registration fee paid successfully!",
-									onClose: () => navigate("/"),
-								});
 							},
 							prefill: {
-								name: `${user.first_name || ""} ${user.last_name || ""}`,
-								email: user.email,
-								contact: user.phone_number,
-							},
-							notes: {
-								address: "CSC Solutions Registration Fee",
+								name: `${data.data.user.first_name || ""} ${data.data.user.last_name || ""}`,
+								email: data.data.user.email,
+								contact: data.data.user.phone_number,
 							},
 							theme: {
 								color: "#3399cc",
 							},
 							modal: {
 								ondismiss: function () {
-									console.log("Checkout form closed");
 									setInfoPopupState({
 										isOpen: true,
 										title: "Payment Incomplete",
@@ -148,13 +156,13 @@ function Login() {
 
 						const rzp = new window.Razorpay(options);
 						rzp.open();
-					};
-
-					handlePayment(
-						settingsData.data.registration_fee.amount,
-						settingsData.data.registration_fee.currency,
-						data.data.user,
-					);
+					} catch (orderErr) {
+						console.error("Order creation failed:", orderErr);
+						setError(
+							"Failed to initiate payment. Please try again.",
+						);
+						navigate("/");
+					}
 				} else {
 					navigate("/");
 				}
