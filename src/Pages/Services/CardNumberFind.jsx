@@ -61,7 +61,7 @@ export default function CardNumberFind() {
 	};
 
 	return (
-		<div className="min-h-[calc(100vh-4rem)] w-full bg-gray-50 py-12 px-4">
+		<div className="  w-full bg-gray-50 py-12 px-4">
 			<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 h-fit">
 					<h1 className="text-2xl font-semibold text-gray-900 mb-6 text-center">

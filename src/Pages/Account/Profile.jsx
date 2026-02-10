@@ -168,14 +168,14 @@ function Profile() {
 
 	if (!profileData) {
 		return (
-			<div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center bg-gray-50">
+			<div className="  w-full flex items-center justify-center bg-gray-50">
 				<div className="text-gray-500 text-lg">Loading...</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-[calc(100vh-4rem)] w-full bg-gray-50 py-12 px-4">
+		<div className="  w-full bg-gray-50 py-12 px-4">
 			<div className="max-w-2xl mx-auto">
 				{/* Profile Card */}
 				<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">

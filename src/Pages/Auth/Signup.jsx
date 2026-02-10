@@ -241,7 +241,7 @@ function Signup() {
 	};
 
 	return (
-		<div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4 py-6 sm:py-8">
+		<div className="  w-full flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4 py-6 sm:py-8">
 			<div className="w-full max-w-lg">
 				<div className="text-center mb-6 sm:mb-8">
 					<h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">
