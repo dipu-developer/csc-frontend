@@ -187,7 +187,7 @@ function Login() {
 	};
 
 	return (
-		<div className="  w-full flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
+		<div className="w-full flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4 mt-10">
 			<div className="w-full max-w-md">
 				<div className="text-center mb-8">
 					<h1 className="text-3xl font-semibold text-gray-900 mb-2">
