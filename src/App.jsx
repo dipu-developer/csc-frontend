@@ -153,7 +153,10 @@ function App() {
 									path="/privacy_policy"
 									element={<PrivacyPolicy />}
 								/>
-								<Route path="/tc" element={<TC />} />
+								<Route
+									path="/terms_conditions"
+									element={<TC />}
+								/>
 								<Route path="/about_us" element={<AboutUs />} />
 							</Routes>
 						</div>

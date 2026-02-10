@@ -41,7 +41,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
-									to="/tc"
+									to="/terms_conditions"
 									className="hover:text-white transition-colors inline-block"
 								>
 									Terms & Conditions
