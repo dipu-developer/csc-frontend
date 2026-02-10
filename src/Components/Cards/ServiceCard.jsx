@@ -9,6 +9,8 @@ export default function ServiceCard({
 	productName,
 	description,
 	price,
+	amount,
+	currency,
 	showBuyButton = true,
 	showDownloadButton = false,
 	disableNavigation = false,
@@ -22,22 +24,29 @@ export default function ServiceCard({
 		onClose: null,
 	});
 
+	const displayImage =
+		image || "https://via.placeholder.com/400x300?text=No+Image";
+
 	return (
 		<div
-			onClick={() => !disableNavigation && navigate(`${basePath}/${id}`)}
+			onClick={() =>
+				!disableNavigation &&
+				navigate(`${basePath}/${id}`, {
+					state: { price, amount, currency },
+				})
+			}
 			className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group ${
 				disableNavigation ? "" : "cursor-pointer"
 			}`}
 		>
-			{/* Product Image
+			{/* Product Image */}
 			<div className="aspect-[4/3] overflow-hidden bg-gray-100">
 				<img
 					src={displayImage}
 					alt={productName}
 					className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
 				/>
-			</div> */}
-
+			</div>
 			{/* Card Content */}
 			<div className="p-5">
 				{/* Product Name */}
@@ -64,7 +73,9 @@ export default function ServiceCard({
 					<button
 						onClick={(e) => {
 							e.stopPropagation();
-							navigate(`${basePath}/${id}`);
+							navigate(`${basePath}/${id}`, {
+								state: { price, amount, currency },
+							});
 						}}
 						className="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm"
 					>

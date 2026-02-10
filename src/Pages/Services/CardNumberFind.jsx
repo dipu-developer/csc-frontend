@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 export default function CardNumberFind() {
+	const location = useLocation();
 	const [name, setName] = useState("");
 	const [result, setResult] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const { price } = location.state || {};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -69,7 +72,8 @@ export default function CardNumberFind() {
 							{loading ? "Searching..." : "Submit"}
 						</button>
 						<div className="text-sm text-gray-500 text-center">
-							Note: 10Rs will be deducted for each search.
+							Note: {price || "10Rs"} will be deducted for each
+							search.
 						</div>
 					</form>
 				</div>

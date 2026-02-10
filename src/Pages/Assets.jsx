@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../Components/Cards/ProductCard";
+import InfoPopup from "../Components/PopUp/InfoPopup";
 
 function Assets() {
+	const navigate = useNavigate();
 	const [products, setProducts] = useState([]);
 	const [purchases, setPurchases] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -40,7 +49,17 @@ function Assets() {
 				setPurchases(purchasesRes.data.data.purchases);
 			} catch (error) {
 				console.error("Error fetching data:", error);
-				setError("Failed to load assets");
+				if (error.response && error.status === 403) {
+					setInfoPopupState({
+						isOpen: true,
+						title: "Pro Feature Only",
+						description:
+							"This feature is available for PRO users only.",
+						onClose: () => navigate("/"),
+					});
+				} else {
+					setError("Failed to load assets");
+				}
 			} finally {
 				setLoading(false);
 			}
@@ -165,6 +184,15 @@ function Assets() {
 					</div>
 				)}
 			</div>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
+			/>
 		</div>
 	);
 }

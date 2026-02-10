@@ -140,6 +140,7 @@ function Services() {
 							<ServiceCard
 								key={service.service_code}
 								id={service.service_code}
+								image={service.image_url}
 								productName={service.name}
 								description={service.description}
 								price={
