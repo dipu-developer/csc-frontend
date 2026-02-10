@@ -1,4 +1,5 @@
 import React from "react";
+import Footer from "../../Components/Footer";
 
 export default function AboutUs() {
 	return (
@@ -20,22 +21,51 @@ export default function AboutUs() {
 				<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12 space-y-8">
 					<section>
 						<p className="text-gray-600 leading-relaxed mb-4">
-							This platform is built on extensive practical experience and in-depth knowledge of the digital service and cyber cafe ecosystem. Our objective is to provide clear, simple, and practical guidance that helps cyber café operators, digital service providers, and individuals efficiently perform day-to-day digital service tasks while improving productivity and professional standards.
+							This platform is built on extensive practical
+							experience and in-depth knowledge of the digital
+							service and cyber cafe ecosystem. Our objective is
+							to provide clear, simple, and practical guidance
+							that helps cyber café operators, digital service
+							providers, and individuals efficiently perform
+							day-to-day digital service tasks while improving
+							productivity and professional standards.
 						</p>
 					</section>
 					<section>
 						<p className="text-gray-600 leading-relaxed">
-							Through this website, users can access educational resources related to online form-filling assistance, cyber café business growth strategies, simplified explanations of various public service schemes, and step-by-step tutorials for document preparation, photo editing, ID card setup, and print workflow management. The educational materials are designed to make complex procedures easier to understand and implement in real-world working environments.
+							Through this website, users can access educational
+							resources related to online form-filling assistance,
+							cyber café business growth strategies, simplified
+							explanations of various public service schemes, and
+							step-by-step tutorials for document preparation,
+							photo editing, ID card setup, and print workflow
+							management. The educational materials are designed
+							to make complex procedures easier to understand and
+							implement in real-world working environments.
 						</p>
 					</section>
 					<section>
 						<p className="text-gray-600 leading-relaxed">
-							In addition to educational content, the platform offers carefully designed digital products intended to streamline routine digital service operations. These include professionally prepared templates, print-ready formats, workflow-enhancing resources, and other productivity tools that help service providers perform tasks faster and with improved consistency.
+							In addition to educational content, the platform
+							offers carefully designed digital products intended
+							to streamline routine digital service operations.
+							These include professionally prepared templates,
+							print-ready formats, workflow-enhancing resources,
+							and other productivity tools that help service
+							providers perform tasks faster and with improved
+							consistency.
 						</p>
 					</section>
 					<section>
 						<p className="text-gray-600 leading-relaxed">
-							In addition to educational content, the platform offers carefully designed digital products intended to streamline routine digital service operations. These include professionally prepared templates, print-ready formats, workflow-enhancing resources, and other productivity tools that help service providers perform tasks faster and with improved consistency.
+							In addition to educational content, the platform
+							offers carefully designed digital products intended
+							to streamline routine digital service operations.
+							These include professionally prepared templates,
+							print-ready formats, workflow-enhancing resources,
+							and other productivity tools that help service
+							providers perform tasks faster and with improved
+							consistency.
 						</p>
 					</section>
 
@@ -132,6 +162,7 @@ export default function AboutUs() {
 					</section>
 				</div>
 			</div>
+			<Footer />
 		</div>
 	);
 }

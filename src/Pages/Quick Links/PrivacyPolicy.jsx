@@ -1,4 +1,5 @@
 import React from "react";
+import Footer from "../../Components/Footer";
 
 export default function PrivacyPolicy() {
 	return (
@@ -18,11 +19,37 @@ export default function PrivacyPolicy() {
 					{/* Introduction */}
 					<section>
 						<p className="text-gray-600 leading-relaxed">
-We value the privacy of our users and are committed to handling personal information with appropriate care and responsibility. Any information collected through this website, including but not limited to name, email address, contact details, and transaction-related data, is collected solely for the purpose of providing requested services, improving user experience, processing orders, and maintaining operational functionality of the platform. We do not sell, rent, or intentionally share users personal data with third parties for marketing or commercial purposes, except where disclosure may be required to comply with applicable laws, legal processes, or authorized governmental requests. Reasonable administrative, technical, and security measures may be implemented to protect user information; however, users acknowledge that no digital transmission or storage system can be guaranteed to be completely secure. By using this website, users consent to the collection and use of their information in accordance with this policy. The website reserves the right to update or modify this Privacy Policy from time to time to reflect operational, legal, or regulatory changes, and continued use of the website after such updates shall constitute acceptance of the revised policy.
+							We value the privacy of our users and are committed
+							to handling personal information with appropriate
+							care and responsibility. Any information collected
+							through this website, including but not limited to
+							name, email address, contact details, and
+							transaction-related data, is collected solely for
+							the purpose of providing requested services,
+							improving user experience, processing orders, and
+							maintaining operational functionality of the
+							platform. We do not sell, rent, or intentionally
+							share users personal data with third parties for
+							marketing or commercial purposes, except where
+							disclosure may be required to comply with applicable
+							laws, legal processes, or authorized governmental
+							requests. Reasonable administrative, technical, and
+							security measures may be implemented to protect user
+							information; however, users acknowledge that no
+							digital transmission or storage system can be
+							guaranteed to be completely secure. By using this
+							website, users consent to the collection and use of
+							their information in accordance with this policy.
+							The website reserves the right to update or modify
+							this Privacy Policy from time to time to reflect
+							operational, legal, or regulatory changes, and
+							continued use of the website after such updates
+							shall constitute acceptance of the revised policy.
 						</p>
 					</section>
 				</div>
 			</div>
+			<Footer />
 		</div>
 	);
 }
