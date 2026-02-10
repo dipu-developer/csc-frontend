@@ -105,7 +105,7 @@ export default function Wallet() {
 				key: razorpay_key || import.meta.env.VITE_RAZORPAY_KEY,
 				amount: Math.round(amount * 100),
 				currency: currency,
-				name: "CSC Solutions",
+				name: "Smart Citizen Help",
 				description: "Wallet Top-up",
 				order_id: order_id,
 				handler: async (response) => {

@@ -124,7 +124,7 @@ function Login() {
 								import.meta.env.VITE_RAZORPAY_KEY,
 							amount: Math.round(amount * 100),
 							currency: currency,
-							name: "CSC Solutions",
+							name: "Smart Citizen Help",
 							description: "Registration Fee",
 							order_id: order_id,
 							handler: async (response) => {

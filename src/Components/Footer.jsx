@@ -9,7 +9,7 @@ export default function Footer() {
 					{/* Company Info */}
 					<div className="md:col-span-1">
 						<h3 className="text-white text-xl font-semibold mb-4">
-							CSC Solutions
+							Smart Citizen Help
 						</h3>
 						<p className="text-sm text-gray-400 leading-relaxed">
 							Providing innovative solutions for your business
@@ -98,10 +98,10 @@ export default function Footer() {
 									/>
 								</svg>
 								<a
-									href="mailto:support@cscsolutions.com"
+									href="mailto:support@smartcitizenhelp.com"
 									className="hover:text-white transition-colors"
 								>
-									support@cscsolutions.com
+									support@smartcitizenhelp.com
 								</a>
 							</div>
 
@@ -141,7 +141,7 @@ export default function Footer() {
 				{/* Bottom Bar */}
 				<div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
 					<p className="text-sm text-gray-400">
-						&copy; {new Date().getFullYear()} CSC Solutions. All
+						&copy; {new Date().getFullYear()} Smart Citizen Help. All
 						rights reserved.
 					</p>
 

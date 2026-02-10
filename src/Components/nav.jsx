@@ -123,7 +123,7 @@ export default function Nav({ toggleSidebar, isSidebarOpen }) {
 						<Link to="/" className="flex items-center gap-2">
 							<div className="text-xl sm:text-2xl">🎯</div>
 							<span className="text-base sm:text-lg font-semibold text-gray-900">
-								CSC Solutions
+								Smart Citizen Help
 							</span>
 						</Link>
 					</div>
