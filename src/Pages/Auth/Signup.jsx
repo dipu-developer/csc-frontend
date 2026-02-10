@@ -1,6 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import InfoPopup from "../../Components/PopUp/InfoPopup";
+
+function loadScript(src) {
+	return new Promise((resolve) => {
+		const script = document.createElement("script");
+		script.src = src;
+		script.onload = () => {
+			resolve(true);
+		};
+		script.onerror = () => {
+			resolve(false);
+		};
+		document.body.appendChild(script);
+	});
+}
 
 function Signup() {
 	const [formData, setFormData] = useState({
@@ -16,6 +31,12 @@ function Signup() {
 	const [fieldErrors, setFieldErrors] = useState({});
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [infoPopupState, setInfoPopupState] = useState({
+		isOpen: false,
+		title: "",
+		description: "",
+		onClose: null,
+	});
 
 	const navigate = useNavigate();
 
@@ -93,7 +114,99 @@ function Signup() {
 
 				window.dispatchEvent(new Event("authChanged"));
 				console.log("Signup successful:", data);
-				navigate("/");
+				try {
+					const settingsResponse = await axios.get(
+						`${import.meta.env.VITE_BACKEND_URL}/api/payments/settings/`,
+						{
+							headers: {
+								Authorization: `Bearer ${data.data.tokens.access}`,
+							},
+						},
+					);
+
+					const settingsData = settingsResponse.data;
+					if (
+						settingsData.data.user_status.registration_fee_paid ===
+						false
+					) {
+						const res = await loadScript(
+							"https://checkout.razorpay.com/v1/checkout.js",
+						);
+
+						if (!res) {
+							setError(
+								"Failed to load payment gateway. Please check your connection.",
+							);
+							return;
+						}
+
+						const handlePayment = (amount, currency, user) => {
+							const options = {
+								key: import.meta.env.VITE_RAZORPAY_KEY,
+								amount: amount * 100,
+								currency: currency || "INR",
+								name: "CSC Solutions",
+								description: "Registration Fee",
+								handler: function (response) {
+									console.log(
+										"Payment successful, response: ",
+										response,
+									);
+									setInfoPopupState({
+										isOpen: true,
+										title: "Payment Successful",
+										description:
+											"Registration fee paid successfully!",
+										onClose: () => navigate("/"),
+									});
+								},
+								prefill: {
+									name: `${user.first_name || ""} ${user.last_name || ""}`,
+									email: user.email,
+									contact: user.phone_number,
+								},
+								notes: {
+									address: "CSC Solutions Registration Fee",
+								},
+								theme: {
+									color: "#3399cc",
+								},
+								modal: {
+									ondismiss: function () {
+										console.log("Checkout form closed");
+										setInfoPopupState({
+											isOpen: true,
+											title: "Payment Incomplete",
+											description:
+												"Payment was not completed. You will be redirected to the home page. You can pay the registration fee later from your profile.",
+											onClose: () => navigate("/"),
+										});
+									},
+								},
+							};
+
+							const rzp = new window.Razorpay(options);
+							rzp.open();
+						};
+
+						handlePayment(
+							settingsData.data.registration_fee.amount,
+							settingsData.data.registration_fee.currency,
+							data.data.user,
+						);
+					} else {
+						navigate("/");
+					}
+				} catch (settingsError) {
+					console.error(
+						"Error fetching payment settings:",
+						settingsError,
+					);
+					setError(
+						"Signup successful, but could not fetch payment status. Proceeding to dashboard.",
+					);
+					navigate("/"); // Fallback to navigate home
+				}
 			} else {
 				navigate("/login");
 			}
@@ -402,12 +515,18 @@ function Signup() {
 							</div>
 						</div>
 
-						<button
-							type="submit"
-							className="w-full bg-blue-600 text-white font-medium py-2.5 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-						>
-							Create account
-						</button>
+						<div>
+							<button
+								type="submit"
+								className="w-full bg-blue-600 text-white font-medium text-xl py-2.5 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+							>
+								Register
+							</button>
+							<p className="text-xs text-gray-500 mt-2 text-center">
+								Note: You will be redirected to pay registration
+								fee: 100Rs
+							</p>
+						</div>
 					</form>
 				</div>
 
@@ -421,6 +540,15 @@ function Signup() {
 					</Link>
 				</p>
 			</div>
+			<InfoPopup
+				isOpen={infoPopupState.isOpen}
+				onClose={() => {
+					setInfoPopupState((prev) => ({ ...prev, isOpen: false }));
+					if (infoPopupState.onClose) infoPopupState.onClose();
+				}}
+				title={infoPopupState.title}
+				description={infoPopupState.description}
+			/>
 		</div>
 	);
 }
