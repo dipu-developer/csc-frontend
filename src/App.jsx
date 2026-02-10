@@ -87,7 +87,7 @@ function App() {
 									path="/"
 									element={
 										<PrivateRoute>
-											<Home />
+											<Assets />
 										</PrivateRoute>
 									}
 								/>

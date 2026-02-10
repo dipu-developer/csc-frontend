@@ -77,9 +77,8 @@ export default function Footer() {
 									/>
 								</svg>
 								<span className="text-gray-400">
-									123 Business Avenue, Tech District
+									Valsad, Gujarat
 									<br />
-									City - 123456
 								</span>
 							</div>
 

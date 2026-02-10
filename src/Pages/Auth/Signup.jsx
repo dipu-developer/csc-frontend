@@ -340,7 +340,7 @@ function Signup() {
 										? "border-red-500"
 										: "border-gray-200"
 								} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400`}
-								placeholder="+91 1234567890"
+								placeholder="999999999"
 								required
 							/>
 							{fieldErrors.phone_number && (
@@ -349,24 +349,6 @@ function Signup() {
 								</p>
 							)}
 						</div>
-
-						{/* <div>
-							<label
-								htmlFor="referralCode"
-								className="block text-sm font-medium text-gray-700 mb-1.5"
-							>
-								Referral code
-							</label>
-							<input
-								id="referralCode"
-								type="text"
-								name="referralCode"
-								value={formData.referralCode}
-								onChange={handleChange}
-								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
-								placeholder="Enter code"
-							/>
-						</div> */}
 
 						<div>
 							<label
