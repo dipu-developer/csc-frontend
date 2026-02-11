@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import axios from "axios";
 
 // components
 import PrivateRoute from "./Components/PrivateRoute.jsx";
@@ -24,23 +25,50 @@ import PrivacyPolicy from "./Pages/Quick Links/PrivacyPolicy.jsx";
 import TC from "./Pages/Quick Links/TC.jsx";
 import AboutUs from "./Pages/Quick Links/AboutUs.jsx";
 
+//Infopopup box
+import InfoPopup from "./Components/PopUp/InfoPopup.jsx";
+
 function App() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+	const [popupData, setPopupData] = useState({
+		isOpen: false,
+		title: "Slow down",
+		description: "",
+	});
+
 	useEffect(() => {
+		// --- Existing Auth Logic ---
 		const checkAuth = () => {
 			const authUser = localStorage.getItem("authUser");
 			setIsLoggedIn(!!authUser);
 		};
-
 		window.addEventListener("storage", checkAuth);
 		window.addEventListener("authChanged", checkAuth);
 		checkAuth();
 
+		// --- Axios Interceptor for 429 Errors ---
+		const interceptor = axios.interceptors.response.use(
+			(response) => response,
+			(error) => {
+				if (error.response && error.response.status === 429) {
+					const url = error.config.url;
+
+					setPopupData({
+						isOpen: true,
+						title: "Rate Limit Exceeded",
+						description: `Try Again After Some Time.`,
+					});
+				}
+				return Promise.reject(error);
+			},
+		);
+
 		return () => {
 			window.removeEventListener("storage", checkAuth);
 			window.removeEventListener("authChanged", checkAuth);
+			axios.interceptors.response.eject(interceptor);
 		};
 	}, []);
 
@@ -49,6 +77,15 @@ function App() {
 	return (
 		<>
 			<Router>
+				{/* Global Info Popup */}
+				<InfoPopup
+					isOpen={popupData.isOpen}
+					onClose={() =>
+						setPopupData({ ...popupData, isOpen: false })
+					}
+					title={popupData.title}
+					description={popupData.description}
+				/>
 				<div className="min-w-[320px]">
 					<Nav
 						toggleSidebar={toggleSidebar}
