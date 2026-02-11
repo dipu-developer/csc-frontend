@@ -52,7 +52,7 @@ function Login() {
 				{
 					email: formData.email,
 					password: formData.password,
-				},
+				},{ withCredentials: true},
 			);
 
 			const data = response.data;
@@ -111,7 +111,7 @@ function Login() {
 							{
 								headers: {
 									Authorization: `Bearer ${data.data.tokens.access}`,
-								},
+								}, withCredentials: true,
 							},
 						);
 

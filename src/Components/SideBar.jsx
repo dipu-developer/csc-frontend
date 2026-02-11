@@ -25,6 +25,7 @@ export default function SideBar({ isOpen, closeSidebar }) {
 						headers: {
 							Authorization: `Bearer ${accessToken}`,
 						},
+						withCredentials: true,
 					},
 				);
 			}

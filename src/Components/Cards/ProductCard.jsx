@@ -59,7 +59,7 @@ export default function ProductCard({
 			const response = await axios.post(
 				`${backendUrl}/api/payments/generate-download-token/`,
 				{ purchase_id: id },
-				{ headers: { Authorization: `Bearer ${token}` } },
+				{ headers: { Authorization: `Bearer ${token}` }, withCredentials: true, },
 			);
 
 			if (response.data.status === "success") {

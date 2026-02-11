@@ -95,7 +95,7 @@ export default function Wallet() {
 			const response = await axios.post(
 				`${backendUrl}/api/payments/wallet/topup/`,
 				{ amount: topUpAmount },
-				{ headers: { Authorization: `Bearer ${token}` } },
+				{ headers: { Authorization: `Bearer ${token}` } , withCredentials: true,},
 			);
 
 			const { order_id, amount, currency, razorpay_key } =

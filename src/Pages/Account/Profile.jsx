@@ -98,7 +98,7 @@ function Profile() {
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,
-					},
+					}, withCredentials: true,
 				},
 			);
 
@@ -151,7 +151,7 @@ function Profile() {
 					{
 						headers: {
 							Authorization: `Bearer ${accessToken}`,
-						},
+						}, withCredentials: true,
 					},
 				);
 			}
